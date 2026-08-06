@@ -1,0 +1,831 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: KDP Digital Products Studio API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: books
+    description: Book management
+  - name: generation
+    description: PDF and file generation
+  - name: files
+    description: Generated file access
+  - name: palettes
+    description: Color palette catalog
+  - name: tasks
+    description: Progress tracker
+  - name: stats
+    description: Dashboard statistics
+
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  # ── Books ──────────────────────────────────────────────────────────────────
+  /books:
+    get:
+      operationId: listBooks
+      tags: [books]
+      summary: List all books
+      responses:
+        "200":
+          description: Book list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Book"
+    post:
+      operationId: createBook
+      tags: [books]
+      summary: Create a new book
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Book"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /books/{id}:
+    get:
+      operationId: getBook
+      tags: [books]
+      summary: Get a single book
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Book
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Book"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    patch:
+      operationId: updateBook
+      tags: [books]
+      summary: Update a book
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookUpdate"
+      responses:
+        "200":
+          description: Updated book
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Book"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      operationId: deleteBook
+      tags: [books]
+      summary: Delete a book
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "204":
+          description: Deleted
+
+  # ── Validation ─────────────────────────────────────────────────────────────
+  /books/validate:
+    post:
+      operationId: validateBook
+      tags: [books]
+      summary: Validate book config before generation (page count, margins, spine)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ValidationRequest"
+      responses:
+        "200":
+          description: Validation result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationResult"
+
+  # ── Page-count preview ─────────────────────────────────────────────────────
+  /books/{id}/page-count:
+    get:
+      operationId: getBookPageCount
+      tags: [books]
+      summary: Compute expected page count for a book config
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Page count preview
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PageCountResult"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ── Generation ─────────────────────────────────────────────────────────────
+  /books/{id}/generate-interior:
+    post:
+      operationId: generateInterior
+      tags: [generation]
+      summary: Generate interior PDF for a book
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Generation result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenerationResult"
+        "400":
+          description: Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /books/{id}/generate-cover:
+    post:
+      operationId: generateCover
+      tags: [generation]
+      summary: Generate full-wrap cover PDF for a book
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Generation result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenerationResult"
+        "400":
+          description: Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /books/{id}/generate-listing:
+    post:
+      operationId: generateListing
+      tags: [generation]
+      summary: Generate KDP listing metadata (title, subtitle, keywords, categories)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Listing metadata
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListingResult"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /books/{id}/generate-template:
+    post:
+      operationId: generateTemplate
+      tags: [generation]
+      summary: Generate editable Canva/Affinity template ZIP
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Generation result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenerationResult"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ── Generated files ────────────────────────────────────────────────────────
+  /books/{id}/files:
+    get:
+      operationId: listBookFiles
+      tags: [files]
+      summary: List all generated files for a book
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: File list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/GeneratedFile"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /files/{fileId}/download:
+    get:
+      operationId: downloadFile
+      tags: [files]
+      summary: Download a generated file
+      parameters:
+        - name: fileId
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: File download (binary)
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ── Palettes ───────────────────────────────────────────────────────────────
+  /palettes:
+    get:
+      operationId: listPalettes
+      tags: [palettes]
+      summary: List all available color palettes
+      responses:
+        "200":
+          description: Palette catalog
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Palette"
+
+  # ── Dashboard stats ────────────────────────────────────────────────────────
+  /stats:
+    get:
+      operationId: getDashboardStats
+      tags: [stats]
+      summary: Get dashboard statistics
+      responses:
+        "200":
+          description: Stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardStats"
+
+  # ── Progress tasks ─────────────────────────────────────────────────────────
+  /tasks:
+    get:
+      operationId: listTasks
+      tags: [tasks]
+      summary: List all progress tasks
+      responses:
+        "200":
+          description: Task list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Task"
+    post:
+      operationId: createTask
+      tags: [tasks]
+      summary: Create a new progress task
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TaskInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+
+  /tasks/{id}:
+    patch:
+      operationId: updateTask
+      tags: [tasks]
+      summary: Update a task (status, notes)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TaskUpdate"
+      responses:
+        "200":
+          description: Updated task
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      operationId: deleteTask
+      tags: [tasks]
+      summary: Delete a task
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "204":
+          description: Deleted
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+
+    # ── Book ──────────────────────────────────────────────────────────────────
+    Book:
+      type: object
+      required: [id, title, niche, bookType, colorPalette, trimSize, dayCount, interiorType, authorName, status, createdAt, updatedAt]
+      properties:
+        id:
+          type: number
+        title:
+          type: string
+        subtitle:
+          type: ["string", "null"]
+        niche:
+          type: string
+        targetAudience:
+          type: ["string", "null"]
+        bookType:
+          type: string
+          enum: [default, sobriety, chronic_pain]
+        colorPalette:
+          type: string
+        trimSize:
+          type: string
+          enum: ["6x9", "5x8", "8.5x11"]
+        dayCount:
+          type: number
+        interiorType:
+          type: string
+          enum: [full_color, black_white]
+        authorName:
+          type: string
+        includeHabitTracker:
+          type: boolean
+        includeWeeklyReview:
+          type: boolean
+        status:
+          type: string
+          enum: [draft, generated, published]
+        lastPageCount:
+          type: ["number", "null"]
+        notes:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    BookInput:
+      type: object
+      required: [title, niche, bookType, colorPalette, trimSize, dayCount, interiorType, authorName]
+      properties:
+        title:
+          type: string
+          minLength: 1
+        subtitle:
+          type: string
+        niche:
+          type: string
+          minLength: 1
+        targetAudience:
+          type: string
+        bookType:
+          type: string
+          enum: [default, sobriety, chronic_pain]
+        colorPalette:
+          type: string
+        trimSize:
+          type: string
+          enum: ["6x9", "5x8", "8.5x11"]
+        dayCount:
+          type: number
+          minimum: 1
+          maximum: 365
+        interiorType:
+          type: string
+          enum: [full_color, black_white]
+        authorName:
+          type: string
+          minLength: 1
+        includeHabitTracker:
+          type: boolean
+        includeWeeklyReview:
+          type: boolean
+        notes:
+          type: string
+
+    BookUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+        subtitle:
+          type: string
+        niche:
+          type: string
+        targetAudience:
+          type: string
+        bookType:
+          type: string
+          enum: [default, sobriety, chronic_pain]
+        colorPalette:
+          type: string
+        trimSize:
+          type: string
+          enum: ["6x9", "5x8", "8.5x11"]
+        dayCount:
+          type: number
+          minimum: 1
+          maximum: 365
+        interiorType:
+          type: string
+          enum: [full_color, black_white]
+        authorName:
+          type: string
+        includeHabitTracker:
+          type: boolean
+        includeWeeklyReview:
+          type: boolean
+        status:
+          type: string
+          enum: [draft, generated, published]
+        notes:
+          type: string
+
+    # ── Validation ─────────────────────────────────────────────────────────────
+    ValidationRequest:
+      type: object
+      required: [bookType, dayCount, interiorType]
+      properties:
+        bookType:
+          type: string
+          enum: [default, sobriety, chronic_pain]
+        dayCount:
+          type: number
+        interiorType:
+          type: string
+          enum: [full_color, black_white]
+        includeHabitTracker:
+          type: boolean
+        includeWeeklyReview:
+          type: boolean
+
+    ValidationResult:
+      type: object
+      required: [valid, pageCount, minimum, spineTextAllowed, warnings]
+      properties:
+        valid:
+          type: boolean
+        pageCount:
+          type: number
+        minimum:
+          type: number
+        spineTextAllowed:
+          type: boolean
+        warnings:
+          type: array
+          items:
+            type: string
+        suggestedDayCount:
+          type: ["number", "null"]
+
+    PageCountResult:
+      type: object
+      required: [pageCount, minimum, spineTextAllowed, meetsMinimum]
+      properties:
+        pageCount:
+          type: number
+        minimum:
+          type: number
+        spineTextAllowed:
+          type: boolean
+        meetsMinimum:
+          type: boolean
+
+    # ── Generation ─────────────────────────────────────────────────────────────
+    GenerationResult:
+      type: object
+      required: [success, fileId, fileName, fileType, pageCount]
+      properties:
+        success:
+          type: boolean
+        fileId:
+          type: number
+        fileName:
+          type: string
+        fileType:
+          type: string
+        pageCount:
+          type: number
+        spineInches:
+          type: ["number", "null"]
+        message:
+          type: string
+
+    ListingResult:
+      type: object
+      required: [title, subtitle, description, keywords, categories, suggestedPrice]
+      properties:
+        title:
+          type: string
+        subtitle:
+          type: string
+        description:
+          type: string
+        keywords:
+          type: array
+          items:
+            type: string
+        categories:
+          type: array
+          items:
+            type: string
+        suggestedPrice:
+          type: string
+        warnings:
+          type: array
+          items:
+            type: string
+
+    # ── Generated File ──────────────────────────────────────────────────────────
+    GeneratedFile:
+      type: object
+      required: [id, bookId, fileType, fileName, createdAt]
+      properties:
+        id:
+          type: number
+        bookId:
+          type: number
+        fileType:
+          type: string
+          enum: [interior, cover, listing, template]
+        fileName:
+          type: string
+        pageCount:
+          type: ["number", "null"]
+        spineInches:
+          type: ["number", "null"]
+        createdAt:
+          type: string
+          format: date-time
+
+    # ── Palette ────────────────────────────────────────────────────────────────
+    Palette:
+      type: object
+      required: [key, name, primary, secondary, accent, text]
+      properties:
+        key:
+          type: string
+        name:
+          type: string
+        primary:
+          type: string
+        secondary:
+          type: string
+        accent:
+          type: string
+        highlight:
+          type: string
+        text:
+          type: string
+        headerText:
+          type: string
+
+    # ── Dashboard ──────────────────────────────────────────────────────────────
+    DashboardStats:
+      type: object
+      required: [totalBooks, byStatus, totalFiles, recentBooks, tasksCount]
+      properties:
+        totalBooks:
+          type: number
+        byStatus:
+          type: object
+          required: [draft, generated, published]
+          properties:
+            draft:
+              type: number
+            generated:
+              type: number
+            published:
+              type: number
+        totalFiles:
+          type: number
+        recentBooks:
+          type: array
+          items:
+            $ref: "#/components/schemas/Book"
+        tasksCount:
+          type: object
+          required: [notStarted, inProgress, done]
+          properties:
+            notStarted:
+              type: number
+            inProgress:
+              type: number
+            done:
+              type: number
+
+    # ── Task ──────────────────────────────────────────────────────────────────
+    Task:
+      type: object
+      required: [id, title, status, createdAt, updatedAt]
+      properties:
+        id:
+          type: number
+        title:
+          type: string
+        category:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [not_started, in_progress, done]
+        notes:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    TaskInput:
+      type: object
+      required: [title]
+      properties:
+        title:
+          type: string
+          minLength: 1
+        category:
+          type: string
+        status:
+          type: string
+          enum: [not_started, in_progress, done]
+        notes:
+          type: string
+
+    TaskUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+        category:
+          type: string
+        status:
+          type: string
+          enum: [not_started, in_progress, done]
+        notes:
+          type: string

@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "KDP Digital Products Studio"
+description = "An internal publishing tool for Nadeem (Bright Mindful Pages brand) to design, generate, and manage Amazon KDP low-content books. Handles interior PDF generation, full-wrap cover PDFs, KDP listing metadata, margin validation, and a progress tracker — all powered by proven Python/reportlab generators."
+version = "1.0.0"
+id = "artifacts/kdp-studio"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 23162
+
+[services.development]
+run = "pnpm --filter @workspace/kdp-studio run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/kdp-studio", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/kdp-studio/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23162"
+BASE_PATH = "/"
