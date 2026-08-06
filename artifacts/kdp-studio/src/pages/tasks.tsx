@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Task, TaskStatus } from "@workspace/api-client-react/src/generated/api.schemas";
+import { type Task, TaskStatus } from "@workspace/api-client-react";
 
 export function Tasks() {
   const { data: tasks, isLoading } = useListTasks();

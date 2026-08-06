@@ -39,7 +39,8 @@ router.post("/books", async (req, res) => {
     } = req.body;
 
     if (!title || !niche) {
-      return res.status(400).json({ error: "title and niche are required" });
+      res.status(400).json({ error: "title and niche are required" });
+      return;
     }
 
     const [book] = await db
@@ -67,7 +68,7 @@ router.post("/books", async (req, res) => {
   }
 });
 
-// GET /books/validate — must be before /books/:id
+// POST /books/validate — must be before /books/:id
 router.post("/books/validate", (req, res) => {
   try {
     const {
@@ -105,7 +106,10 @@ router.get("/books/:id", async (req, res) => {
   try {
     const id = Number(req.params.id);
     const [book] = await db.select().from(booksTable).where(eq(booksTable.id, id));
-    if (!book) return res.status(404).json({ error: "Book not found" });
+    if (!book) {
+      res.status(404).json({ error: "Book not found" });
+      return;
+    }
     res.json(book);
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch book" });
@@ -117,7 +121,10 @@ router.patch("/books/:id", async (req, res) => {
   try {
     const id = Number(req.params.id);
     const [existing] = await db.select().from(booksTable).where(eq(booksTable.id, id));
-    if (!existing) return res.status(404).json({ error: "Book not found" });
+    if (!existing) {
+      res.status(404).json({ error: "Book not found" });
+      return;
+    }
 
     const allowed = [
       "title", "subtitle", "niche", "targetAudience", "bookType", "colorPalette",
@@ -146,7 +153,10 @@ router.delete("/books/:id", async (req, res) => {
   try {
     const id = Number(req.params.id);
     const [existing] = await db.select().from(booksTable).where(eq(booksTable.id, id));
-    if (!existing) return res.status(404).json({ error: "Book not found" });
+    if (!existing) {
+      res.status(404).json({ error: "Book not found" });
+      return;
+    }
     await db.delete(booksTable).where(eq(booksTable.id, id));
     res.status(204).send();
   } catch (err) {
@@ -159,7 +169,10 @@ router.get("/books/:id/page-count", async (req, res) => {
   try {
     const id = Number(req.params.id);
     const [book] = await db.select().from(booksTable).where(eq(booksTable.id, id));
-    if (!book) return res.status(404).json({ error: "Book not found" });
+    if (!book) {
+      res.status(404).json({ error: "Book not found" });
+      return;
+    }
 
     const pageCount = calculatePageCount({
       bookType: book.bookType,
@@ -182,7 +195,10 @@ router.get("/books/:id/files", async (req, res) => {
   try {
     const id = Number(req.params.id);
     const [book] = await db.select().from(booksTable).where(eq(booksTable.id, id));
-    if (!book) return res.status(404).json({ error: "Book not found" });
+    if (!book) {
+      res.status(404).json({ error: "Book not found" });
+      return;
+    }
 
     const files = await db
       .select()

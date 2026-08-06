@@ -16,10 +16,14 @@ router.get("/files/:fileId/download", async (req, res) => {
       .from(generatedFilesTable)
       .where(eq(generatedFilesTable.id, fileId));
 
-    if (!file) return res.status(404).json({ error: "File not found" });
+    if (!file) {
+      res.status(404).json({ error: "File not found" });
+      return;
+    }
 
     if (!fs.existsSync(file.filePath)) {
-      return res.status(404).json({ error: "File does not exist on disk" });
+      res.status(404).json({ error: "File does not exist on disk" });
+      return;
     }
 
     const ext = path.extname(file.fileName).toLowerCase();

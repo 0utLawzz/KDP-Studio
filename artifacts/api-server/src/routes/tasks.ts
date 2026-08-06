@@ -22,7 +22,10 @@ router.get("/tasks", async (_req, res) => {
 router.post("/tasks", async (req, res) => {
   try {
     const { title, category, status = "not_started", notes } = req.body;
-    if (!title) return res.status(400).json({ error: "title is required" });
+    if (!title) {
+      res.status(400).json({ error: "title is required" });
+      return;
+    }
 
     const [task] = await db
       .insert(tasksTable)
@@ -40,7 +43,10 @@ router.patch("/tasks/:id", async (req, res) => {
   try {
     const id = Number(req.params.id);
     const [existing] = await db.select().from(tasksTable).where(eq(tasksTable.id, id));
-    if (!existing) return res.status(404).json({ error: "Task not found" });
+    if (!existing) {
+      res.status(404).json({ error: "Task not found" });
+      return;
+    }
 
     const allowed = ["title", "category", "status", "notes"] as const;
     const updates: Record<string, unknown> = {};
@@ -65,7 +71,10 @@ router.delete("/tasks/:id", async (req, res) => {
   try {
     const id = Number(req.params.id);
     const [existing] = await db.select().from(tasksTable).where(eq(tasksTable.id, id));
-    if (!existing) return res.status(404).json({ error: "Task not found" });
+    if (!existing) {
+      res.status(404).json({ error: "Task not found" });
+      return;
+    }
     await db.delete(tasksTable).where(eq(tasksTable.id, id));
     res.status(204).send();
   } catch (err) {
