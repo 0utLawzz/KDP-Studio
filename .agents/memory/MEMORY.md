@@ -1,1 +1,2 @@
 - [PDF icon rendering](pdf-icon-rendering.md) — use vector-drawn or embedded-font icons in ReportLab PDFs; built-in Helvetica can render Unicode symbols as squares.
+- [Public repository cleanup](github-repo-cleanup.md) — imported assets may expose private material; preserve canonical docs, remove import-only files, scan refs, and verify the pushed branch.
