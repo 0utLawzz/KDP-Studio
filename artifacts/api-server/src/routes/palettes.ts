@@ -114,6 +114,16 @@ const PALETTES = [
     text: "#1C3D2D",
     headerText: "#FFFFFF",
   },
+  {
+    key: "bright_momentum",
+    name: "Bright Momentum",
+    primary: "#275DA8",
+    secondary: "#2FA594",
+    accent: "#FFD45C",
+    highlight: "#F8FFF8",
+    text: "#173B45",
+    headerText: "#FFFFFF",
+  },
 ];
 
 router.get("/palettes", (_req, res) => {

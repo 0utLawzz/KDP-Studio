@@ -118,6 +118,15 @@ PALETTES = {
         "text": colors.HexColor("#1C3D2D"),
         "header_text": colors.white,
     },
+    "bright_momentum": {
+        "primary": colors.HexColor("#275DA8"),
+        "secondary": colors.HexColor("#2FA594"),
+        "accent": colors.HexColor("#FFD45C"),
+        "highlight": colors.HexColor("#F8FFF8"),
+        "text": colors.HexColor("#173B45"),
+        "header_text": colors.white,
+        "coral": colors.HexColor("#FF6D5C"),
+    },
 }
 
 
@@ -348,6 +357,115 @@ class SobrietyDailyCanvas:
             y -= 0.15 * inch
 
 
+class BrightMomentumSobrietyCanvas:
+    """Draws the approved modular-card sobriety page direction."""
+
+    def __init__(self, c, palette, page_width, page_height, day_num):
+        self.c = c
+        self.p = palette
+        self.w = page_width
+        self.h = page_height
+        self.day = day_num
+        self.margin = MARGIN
+
+    def _rule(self, x1, y, x2):
+        self.c.setStrokeColor(self.p["secondary"])
+        self.c.setLineWidth(0.45)
+        self.c.line(x1, y, x2, y)
+
+    def _draw_icon(self, x, y, icon):
+        c = self.c
+        p = self.p
+        c.setFillColor(p["coral"])
+        c.setStrokeColor(p["coral"])
+        c.setLineWidth(1.2)
+        if icon == "sun":
+            c.circle(x, y, 3.2, fill=1, stroke=0)
+            for angle in range(0, 360, 45):
+                import math
+                radians = math.radians(angle)
+                c.line(
+                    x + math.cos(radians) * 5,
+                    y + math.sin(radians) * 5,
+                    x + math.cos(radians) * 7,
+                    y + math.sin(radians) * 7,
+                )
+        elif icon == "heart":
+            path = c.beginPath()
+            path.moveTo(x, y - 5)
+            path.curveTo(x - 8, y + 1, x - 5, y + 7, x, y + 2)
+            path.curveTo(x + 5, y + 7, x + 8, y + 1, x, y - 5)
+            c.drawPath(path, fill=1, stroke=0)
+        else:
+            c.line(x - 6, y, x + 6, y)
+            c.line(x + 2, y + 4, x + 6, y)
+            c.line(x + 2, y - 4, x + 6, y)
+
+    def _card(self, x, y, width, height, icon, label, lines=2):
+        c = self.c
+        p = self.p
+        c.setFillColor(p["highlight"])
+        c.setStrokeColor(p["text"])
+        c.setLineWidth(0.8)
+        c.roundRect(x, y - height, width, height, 8, fill=1, stroke=1)
+        self._draw_icon(x + 0.22 * inch, y - 0.25 * inch, icon)
+        c.setFillColor(p["text"])
+        c.setFont("Helvetica-Bold", 7.5)
+        c.drawString(x + 0.38 * inch, y - 0.25 * inch, label)
+        for index in range(lines):
+            self._rule(x + 0.38 * inch, y - (0.52 + index * 0.2) * inch, x + width - 0.14 * inch)
+
+    def draw(self):
+        c = self.c
+        p = self.p
+        w, h, m = self.w, self.h, self.margin
+        content_w = w - 2 * m
+
+        # Inset coral banner mirrors the approved mockup without violating margins.
+        banner_h = 0.42 * inch
+        c.setFillColor(p["coral"])
+        c.roundRect(m, h - m - banner_h, content_w, banner_h, 8, fill=1, stroke=0)
+        c.setFillColor(p["header_text"])
+        c.setFont("Helvetica-Bold", 7.5)
+        c.drawString(m + 0.14 * inch, h - m - 0.26 * inch, f"DAY {self.day}")
+        c.drawCentredString(w / 2, h - m - 0.26 * inch, "YOU SHOWED UP.")
+        c.drawRightString(w - m - 0.14 * inch, h - m - 0.26 * inch, "KEEP GOING →")
+
+        y = h - m - banner_h - 0.28 * inch
+        c.setFillColor(p["text"])
+        c.setFont("Helvetica", 6.5)
+        c.drawString(m + 0.12 * inch, y, "MY RECOVERY CHECK-IN")
+        c.drawRightString(w - m - 0.12 * inch, y, "90-DAY TRACKER")
+        y -= 0.34 * inch
+
+        c.setFont("Helvetica-Bold", 22)
+        c.drawString(m + 0.12 * inch, y, "TODAY'S")
+        y -= 0.27 * inch
+        c.setFillColor(p["secondary"])
+        c.drawString(m + 0.12 * inch, y, "BRIGHT SPOTS")
+        y -= 0.34 * inch
+
+        card_gap = 0.12 * inch
+        card_h = 0.88 * inch
+        self._card(m + 0.12 * inch, y, content_w - 0.24 * inch, card_h, "sun", "Something I'm proud of")
+        y -= card_h + card_gap
+        self._card(m + 0.12 * inch, y, content_w - 0.24 * inch, card_h, "heart", "Someone who helped me")
+        y -= card_h + card_gap
+        self._card(m + 0.12 * inch, y, content_w - 0.24 * inch, card_h, "arrow", "My next right step")
+        y -= card_h + 0.18 * inch
+
+        c.setFillColor(p["text"])
+        c.setFont("Helvetica-Bold", 7.5)
+        c.drawString(m + 0.12 * inch, y, "TODAY I PRACTICED")
+        y -= 0.18 * inch
+        c.setFont("Helvetica", 7)
+        c.drawString(m + 0.12 * inch, y, "□ honesty     □ patience     □ asking for help")
+
+        c.setFillColor(p["secondary"])
+        c.setFont("Helvetica-BoldOblique", 8)
+        c.drawCentredString(w / 2, m + 0.12 * inch, "Tiny choices add up to a changed life.")
+
+
 def generate_interior(args, output_path):
     palette_key = args.color_palette or "lavender_mint"
     p = get_palette(palette_key)
@@ -437,7 +555,11 @@ def generate_interior(args, output_path):
     for day in range(1, day_count + 1):
         _new_page()
         if book_type == "sobriety":
-            drawer = SobrietyDailyCanvas(c, p, pw, ph, day)
+            drawer = (
+                BrightMomentumSobrietyCanvas(c, p, pw, ph, day)
+                if palette_key == "bright_momentum"
+                else SobrietyDailyCanvas(c, p, pw, ph, day)
+            )
         else:
             drawer = DailyPlannerCanvas(c, p, pw, ph, day)
         drawer.draw()
