@@ -26,6 +26,8 @@ const formSchema = z.object({
   subtitle: z.string().optional(),
   niche: z.string().min(1, "Niche is required"),
   targetAudience: z.string().optional(),
+  category: z.string().optional(),
+  templateKey: z.string().optional(),
   bookType: z.enum(["default", "sobriety", "chronic_pain"]),
   colorPalette: z.string().min(1, "Palette is required"),
   trimSize: z.enum(["6x9", "5x8", "8.5x11"]),
@@ -64,6 +66,8 @@ export function NewBook() {
       subtitle: "",
       niche: "",
       targetAudience: "",
+      category: "",
+      templateKey: "",
       bookType: "default",
       colorPalette: "sage_calm",
       trimSize: "6x9",
@@ -191,6 +195,24 @@ export function NewBook() {
                       <FormItem>
                         <FormLabel>Author Name</FormLabel>
                         <FormControl><Input {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField control={form.control} name="category" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Category</FormLabel>
+                        <FormControl><Input {...field} placeholder="e.g. Wellness" /></FormControl>
+                        <FormDescription>Use a simple planning label for the board.</FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                    <FormField control={form.control} name="templateKey" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Template</FormLabel>
+                        <FormControl><Input {...field} placeholder="e.g. daily_tracker" /></FormControl>
+                        <FormDescription>Leave blank for an original layout.</FormDescription>
                         <FormMessage />
                       </FormItem>
                     )} />

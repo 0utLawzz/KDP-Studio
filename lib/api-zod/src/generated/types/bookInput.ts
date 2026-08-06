@@ -27,6 +27,8 @@ export interface BookInput {
   interiorType: BookInputInteriorType;
   /** @minLength 1 */
   authorName: string;
+  category?: string;
+  templateKey?: string;
   includeHabitTracker?: boolean;
   includeWeeklyReview?: boolean;
   notes?: string;

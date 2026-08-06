@@ -24,9 +24,20 @@ export interface Book {
   dayCount: number;
   interiorType: BookInteriorType;
   authorName: string;
+  /** @nullable */
+  category?: string | null;
+  /** @nullable */
+  templateKey?: string | null;
   includeHabitTracker?: boolean;
   includeWeeklyReview?: boolean;
   status: BookStatus;
+  /**
+     * @minimum 0
+     * @maximum 100
+     */
+  generationProgress: number;
+  /** @nullable */
+  publishedAt?: Date | null;
   /** @nullable */
   lastPageCount?: number | null;
   /** @nullable */

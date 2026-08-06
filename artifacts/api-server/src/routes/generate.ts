@@ -87,7 +87,7 @@ router.post("/books/:id/generate-interior", async (req, res) => {
     }).returning();
 
     await db.update(booksTable)
-      .set({ status: "generated", lastPageCount: pageCount, updatedAt: new Date() })
+      .set({ status: "in_progress", generationProgress: 25, lastPageCount: pageCount, updatedAt: new Date() })
       .where(eq(booksTable.id, id));
 
     res.json({ success: true, file, pageCount });
@@ -139,6 +139,10 @@ router.post("/books/:id/generate-cover", async (req, res) => {
       spineInches: result.spine_inches,
     }).returning();
 
+    await db.update(booksTable)
+      .set({ status: "in_progress", generationProgress: 50, updatedAt: new Date() })
+      .where(eq(booksTable.id, id));
+
     res.json({ success: true, file, spineInches: result.spine_inches });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Failed to generate cover";
@@ -185,6 +189,10 @@ router.post("/books/:id/generate-listing", async (req, res) => {
       fileName,
       filePath: outputPath,
     }).returning();
+
+    await db.update(booksTable)
+      .set({ status: "in_progress", generationProgress: 75, updatedAt: new Date() })
+      .where(eq(booksTable.id, id));
 
     res.json({ success: true, file, listing: result });
   } catch (err) {
@@ -233,6 +241,10 @@ router.post("/books/:id/generate-template", async (req, res) => {
       filePath: outputPath,
       pageCount,
     }).returning();
+
+    await db.update(booksTable)
+      .set({ status: "generated", generationProgress: 100, updatedAt: new Date() })
+      .where(eq(booksTable.id, id));
 
     res.json({ success: true, file });
   } catch (err) {

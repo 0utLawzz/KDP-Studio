@@ -482,7 +482,7 @@ components:
     # ── Book ──────────────────────────────────────────────────────────────────
     Book:
       type: object
-      required: [id, title, niche, bookType, colorPalette, trimSize, dayCount, interiorType, authorName, status, createdAt, updatedAt]
+      required: [id, title, niche, bookType, colorPalette, trimSize, dayCount, interiorType, authorName, status, generationProgress, createdAt, updatedAt]
       properties:
         id:
           type: number
@@ -509,13 +509,24 @@ components:
           enum: [full_color, black_white]
         authorName:
           type: string
+        category:
+          type: ["string", "null"]
+        templateKey:
+          type: ["string", "null"]
         includeHabitTracker:
           type: boolean
         includeWeeklyReview:
           type: boolean
         status:
           type: string
-          enum: [draft, generated, published]
+          enum: [draft, planned, in_progress, generated, published]
+        generationProgress:
+          type: number
+          minimum: 0
+          maximum: 100
+        publishedAt:
+          type: ["string", "null"]
+          format: date-time
         lastPageCount:
           type: ["number", "null"]
         notes:
@@ -559,6 +570,10 @@ components:
         authorName:
           type: string
           minLength: 1
+        category:
+          type: string
+        templateKey:
+          type: string
         includeHabitTracker:
           type: boolean
         includeWeeklyReview:
@@ -595,13 +610,21 @@ components:
           enum: [full_color, black_white]
         authorName:
           type: string
+        category:
+          type: string
+        templateKey:
+          type: string
         includeHabitTracker:
           type: boolean
         includeWeeklyReview:
           type: boolean
         status:
           type: string
-          enum: [draft, generated, published]
+          enum: [draft, planned, in_progress, generated, published]
+        generationProgress:
+          type: number
+          minimum: 0
+          maximum: 100
         notes:
           type: string
 

@@ -26,8 +26,15 @@ export interface BookUpdate {
   dayCount?: number;
   interiorType?: BookUpdateInteriorType;
   authorName?: string;
+  category?: string;
+  templateKey?: string;
   includeHabitTracker?: boolean;
   includeWeeklyReview?: boolean;
   status?: BookUpdateStatus;
+  /**
+     * @minimum 0
+     * @maximum 100
+     */
+  generationProgress?: number;
   notes?: string;
 }

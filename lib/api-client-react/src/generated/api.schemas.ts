@@ -44,6 +44,8 @@ export type BookStatus = typeof BookStatus[keyof typeof BookStatus];
 
 export const BookStatus = {
   draft: 'draft',
+  planned: 'planned',
+  in_progress: 'in_progress',
   generated: 'generated',
   published: 'published',
 } as const;
@@ -62,9 +64,20 @@ export interface Book {
   dayCount: number;
   interiorType: BookInteriorType;
   authorName: string;
+  /** @nullable */
+  category?: string | null;
+  /** @nullable */
+  templateKey?: string | null;
   includeHabitTracker?: boolean;
   includeWeeklyReview?: boolean;
   status: BookStatus;
+  /**
+     * @minimum 0
+     * @maximum 100
+     */
+  generationProgress: number;
+  /** @nullable */
+  publishedAt?: string | null;
   /** @nullable */
   lastPageCount?: number | null;
   /** @nullable */
@@ -117,6 +130,8 @@ export interface BookInput {
   interiorType: BookInputInteriorType;
   /** @minLength 1 */
   authorName: string;
+  category?: string;
+  templateKey?: string;
   includeHabitTracker?: boolean;
   includeWeeklyReview?: boolean;
   notes?: string;
@@ -153,6 +168,8 @@ export type BookUpdateStatus = typeof BookUpdateStatus[keyof typeof BookUpdateSt
 
 export const BookUpdateStatus = {
   draft: 'draft',
+  planned: 'planned',
+  in_progress: 'in_progress',
   generated: 'generated',
   published: 'published',
 } as const;
@@ -173,9 +190,16 @@ export interface BookUpdate {
   dayCount?: number;
   interiorType?: BookUpdateInteriorType;
   authorName?: string;
+  category?: string;
+  templateKey?: string;
   includeHabitTracker?: boolean;
   includeWeeklyReview?: boolean;
   status?: BookUpdateStatus;
+  /**
+     * @minimum 0
+     * @maximum 100
+     */
+  generationProgress?: number;
   notes?: string;
 }
 

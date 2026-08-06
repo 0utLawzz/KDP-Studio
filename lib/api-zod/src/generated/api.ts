@@ -19,6 +19,11 @@ export const HealthCheckResponse = zod.object({
 /**
  * @summary List all books
  */
+export const listBooksResponseGenerationProgressMin = 0;
+export const listBooksResponseGenerationProgressMax = 100;
+
+
+
 export const ListBooksResponseItem = zod.object({
   "id": zod.number(),
   "title": zod.string(),
@@ -31,9 +36,13 @@ export const ListBooksResponseItem = zod.object({
   "dayCount": zod.number(),
   "interiorType": zod.enum(['full_color', 'black_white']),
   "authorName": zod.string(),
+  "category": zod.string().nullish(),
+  "templateKey": zod.string().nullish(),
   "includeHabitTracker": zod.boolean().optional(),
   "includeWeeklyReview": zod.boolean().optional(),
-  "status": zod.enum(['draft', 'generated', 'published']),
+  "status": zod.enum(['draft', 'planned', 'in_progress', 'generated', 'published']),
+  "generationProgress": zod.number().min(listBooksResponseGenerationProgressMin).max(listBooksResponseGenerationProgressMax),
+  "publishedAt": zod.coerce.date().nullish(),
   "lastPageCount": zod.number().nullish(),
   "notes": zod.string().nullish(),
   "createdAt": zod.coerce.date(),
@@ -63,10 +72,17 @@ export const CreateBookBody = zod.object({
   "dayCount": zod.number().min(1).max(createBookBodyDayCountMax),
   "interiorType": zod.enum(['full_color', 'black_white']),
   "authorName": zod.string().min(1),
+  "category": zod.string().optional(),
+  "templateKey": zod.string().optional(),
   "includeHabitTracker": zod.boolean().optional(),
   "includeWeeklyReview": zod.boolean().optional(),
   "notes": zod.string().optional()
 })
+
+export const createBookResponseGenerationProgressMin = 0;
+export const createBookResponseGenerationProgressMax = 100;
+
+
 
 export const CreateBookResponse = zod.object({
   "id": zod.number(),
@@ -80,9 +96,13 @@ export const CreateBookResponse = zod.object({
   "dayCount": zod.number(),
   "interiorType": zod.enum(['full_color', 'black_white']),
   "authorName": zod.string(),
+  "category": zod.string().nullish(),
+  "templateKey": zod.string().nullish(),
   "includeHabitTracker": zod.boolean().optional(),
   "includeWeeklyReview": zod.boolean().optional(),
-  "status": zod.enum(['draft', 'generated', 'published']),
+  "status": zod.enum(['draft', 'planned', 'in_progress', 'generated', 'published']),
+  "generationProgress": zod.number().min(createBookResponseGenerationProgressMin).max(createBookResponseGenerationProgressMax),
+  "publishedAt": zod.coerce.date().nullish(),
   "lastPageCount": zod.number().nullish(),
   "notes": zod.string().nullish(),
   "createdAt": zod.coerce.date(),
@@ -97,6 +117,11 @@ export const GetBookParams = zod.object({
   "id": zod.coerce.number()
 })
 
+export const getBookResponseGenerationProgressMin = 0;
+export const getBookResponseGenerationProgressMax = 100;
+
+
+
 export const GetBookResponse = zod.object({
   "id": zod.number(),
   "title": zod.string(),
@@ -109,9 +134,13 @@ export const GetBookResponse = zod.object({
   "dayCount": zod.number(),
   "interiorType": zod.enum(['full_color', 'black_white']),
   "authorName": zod.string(),
+  "category": zod.string().nullish(),
+  "templateKey": zod.string().nullish(),
   "includeHabitTracker": zod.boolean().optional(),
   "includeWeeklyReview": zod.boolean().optional(),
-  "status": zod.enum(['draft', 'generated', 'published']),
+  "status": zod.enum(['draft', 'planned', 'in_progress', 'generated', 'published']),
+  "generationProgress": zod.number().min(getBookResponseGenerationProgressMin).max(getBookResponseGenerationProgressMax),
+  "publishedAt": zod.coerce.date().nullish(),
   "lastPageCount": zod.number().nullish(),
   "notes": zod.string().nullish(),
   "createdAt": zod.coerce.date(),
@@ -129,6 +158,9 @@ export const UpdateBookParams = zod.object({
 
 export const updateBookBodyDayCountMax = 365;
 
+export const updateBookBodyGenerationProgressMin = 0;
+export const updateBookBodyGenerationProgressMax = 100;
+
 
 
 export const UpdateBookBody = zod.object({
@@ -142,11 +174,19 @@ export const UpdateBookBody = zod.object({
   "dayCount": zod.number().min(1).max(updateBookBodyDayCountMax).optional(),
   "interiorType": zod.enum(['full_color', 'black_white']).optional(),
   "authorName": zod.string().optional(),
+  "category": zod.string().optional(),
+  "templateKey": zod.string().optional(),
   "includeHabitTracker": zod.boolean().optional(),
   "includeWeeklyReview": zod.boolean().optional(),
-  "status": zod.enum(['draft', 'generated', 'published']).optional(),
+  "status": zod.enum(['draft', 'planned', 'in_progress', 'generated', 'published']).optional(),
+  "generationProgress": zod.number().min(updateBookBodyGenerationProgressMin).max(updateBookBodyGenerationProgressMax).optional(),
   "notes": zod.string().optional()
 })
+
+export const updateBookResponseGenerationProgressMin = 0;
+export const updateBookResponseGenerationProgressMax = 100;
+
+
 
 export const UpdateBookResponse = zod.object({
   "id": zod.number(),
@@ -160,9 +200,13 @@ export const UpdateBookResponse = zod.object({
   "dayCount": zod.number(),
   "interiorType": zod.enum(['full_color', 'black_white']),
   "authorName": zod.string(),
+  "category": zod.string().nullish(),
+  "templateKey": zod.string().nullish(),
   "includeHabitTracker": zod.boolean().optional(),
   "includeWeeklyReview": zod.boolean().optional(),
-  "status": zod.enum(['draft', 'generated', 'published']),
+  "status": zod.enum(['draft', 'planned', 'in_progress', 'generated', 'published']),
+  "generationProgress": zod.number().min(updateBookResponseGenerationProgressMin).max(updateBookResponseGenerationProgressMax),
+  "publishedAt": zod.coerce.date().nullish(),
   "lastPageCount": zod.number().nullish(),
   "notes": zod.string().nullish(),
   "createdAt": zod.coerce.date(),
@@ -336,6 +380,11 @@ export const ListPalettesResponse = zod.array(ListPalettesResponseItem)
 /**
  * @summary Get dashboard statistics
  */
+export const getDashboardStatsResponseRecentBooksItemGenerationProgressMin = 0;
+export const getDashboardStatsResponseRecentBooksItemGenerationProgressMax = 100;
+
+
+
 export const GetDashboardStatsResponse = zod.object({
   "totalBooks": zod.number(),
   "byStatus": zod.object({
@@ -356,9 +405,13 @@ export const GetDashboardStatsResponse = zod.object({
   "dayCount": zod.number(),
   "interiorType": zod.enum(['full_color', 'black_white']),
   "authorName": zod.string(),
+  "category": zod.string().nullish(),
+  "templateKey": zod.string().nullish(),
   "includeHabitTracker": zod.boolean().optional(),
   "includeWeeklyReview": zod.boolean().optional(),
-  "status": zod.enum(['draft', 'generated', 'published']),
+  "status": zod.enum(['draft', 'planned', 'in_progress', 'generated', 'published']),
+  "generationProgress": zod.number().min(getDashboardStatsResponseRecentBooksItemGenerationProgressMin).max(getDashboardStatsResponseRecentBooksItemGenerationProgressMax),
+  "publishedAt": zod.coerce.date().nullish(),
   "lastPageCount": zod.number().nullish(),
   "notes": zod.string().nullish(),
   "createdAt": zod.coerce.date(),

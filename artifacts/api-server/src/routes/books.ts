@@ -33,6 +33,8 @@ router.post("/books", async (req, res) => {
       dayCount = 60,
       interiorType = "full_color",
       authorName = "Bright Mindful Pages",
+      category,
+      templateKey,
       includeHabitTracker = true,
       includeWeeklyReview = true,
       notes,
@@ -56,6 +58,8 @@ router.post("/books", async (req, res) => {
         dayCount,
         interiorType,
         authorName,
+        category,
+        templateKey,
         includeHabitTracker,
         includeWeeklyReview,
         notes,
@@ -128,8 +132,9 @@ router.patch("/books/:id", async (req, res) => {
 
     const allowed = [
       "title", "subtitle", "niche", "targetAudience", "bookType", "colorPalette",
-      "trimSize", "dayCount", "interiorType", "authorName", "includeHabitTracker",
-      "includeWeeklyReview", "status", "notes",
+      "trimSize", "dayCount", "interiorType", "authorName", "category", "templateKey",
+      "includeHabitTracker", "includeWeeklyReview", "status", "generationProgress",
+      "publishedAt", "notes",
     ] as const;
     const updates: Record<string, unknown> = {};
     for (const key of allowed) {
@@ -138,7 +143,13 @@ router.patch("/books/:id", async (req, res) => {
 
     const [book] = await db
       .update(booksTable)
-      .set({ ...updates, updatedAt: new Date() })
+      .set({
+        ...updates,
+        ...(updates.status === "published" && !("publishedAt" in updates)
+          ? { publishedAt: new Date(), generationProgress: 100 }
+          : {}),
+        updatedAt: new Date(),
+      })
       .where(eq(booksTable.id, id))
       .returning();
 

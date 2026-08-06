@@ -14,9 +14,13 @@ export const booksTable = pgTable("books", {
   dayCount: integer("day_count").notNull().default(60),
   interiorType: text("interior_type").notNull().default("full_color"), // full_color | black_white
   authorName: text("author_name").notNull().default("Bright Mindful Pages"),
+  category: text("category"),
+  templateKey: text("template_key"),
   includeHabitTracker: boolean("include_habit_tracker").notNull().default(true),
   includeWeeklyReview: boolean("include_weekly_review").notNull().default(true),
-  status: text("status").notNull().default("draft"), // draft | generated | published
+  status: text("status").notNull().default("planned"), // planned | in_progress | generated | published | legacy draft
+  generationProgress: integer("generation_progress").notNull().default(0),
+  publishedAt: timestamp("published_at", { withTimezone: true }),
   lastPageCount: integer("last_page_count"),
   notes: text("notes"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),

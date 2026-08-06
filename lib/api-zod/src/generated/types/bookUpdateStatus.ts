@@ -11,6 +11,8 @@ export type BookUpdateStatus = typeof BookUpdateStatus[keyof typeof BookUpdateSt
 
 export const BookUpdateStatus = {
   draft: 'draft',
+  planned: 'planned',
+  in_progress: 'in_progress',
   generated: 'generated',
   published: 'published',
 } as const;
