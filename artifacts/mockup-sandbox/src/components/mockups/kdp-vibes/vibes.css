@@ -1,0 +1,98 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Space+Grotesk:wght@400;500;600;700&display=swap");
+
+:root {
+  font-family: "DM Sans", sans-serif;
+  color: #263238;
+  background: #f7f5f1;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 1060px; }
+
+.vibe-frame { min-height: 760px; padding: 34px 44px 28px; overflow: hidden; }
+.vibe-intro { display: flex; align-items: end; gap: 22px; margin-bottom: 24px; }
+.vibe-kicker { align-self: start; padding-top: 7px; min-width: 174px; font: 500 10px "DM Mono", monospace; letter-spacing: .08em; }
+.vibe-intro h1 { margin: 0; font: 600 26px "Fraunces", serif; letter-spacing: -.025em; }
+.vibe-intro p { margin: 0 0 2px auto; max-width: 300px; font-size: 11px; line-height: 1.45; opacity: .66; }
+.vibe-spread { display: flex; align-items: stretch; justify-content: center; gap: 36px; }
+.paper { position: relative; width: 390px; height: 560px; padding: 34px; overflow: hidden; box-shadow: 0 16px 35px #1c22231c; }
+.interior-paper { background: #fffdfa; }
+.cover-paper { color: #fff; }
+.paper-topline { display: flex; justify-content: space-between; font: 500 8px "DM Mono", monospace; letter-spacing: .07em; opacity: .7; }
+.paper-prompt { max-width: 265px; margin: 14px 0 24px; font-size: 11px; line-height: 1.45; opacity: .62; }
+.paper h2 { margin: 28px 0 0; font: 600 29px/1.05 "Fraunces", serif; letter-spacing: -.04em; }
+.paper h2 em, .cover-copy h2 em { font-style: normal; }
+.vibe-note { margin-top: 22px; text-align: center; font-size: 11px; opacity: .55; }
+.garden-rule { width: 60px; height: 3px; margin-top: 18px; border-radius: 9px; }
+.mood-row { display: flex; align-items: center; justify-content: space-between; margin-top: 26px; font-size: 11px; }
+.mood-pills { display: flex; gap: 8px; font-size: 21px; }
+.writing-card, .two-cards > div { padding: 14px; border-radius: 13px; }
+.writing-card { margin-top: 18px; }
+.writing-card strong, .two-cards strong { display: block; margin-bottom: 12px; font-size: 10px; }
+.writing-card i, .two-cards i, .bright-fields i, .editorial-grid i { display: block; height: 1px; margin: 11px 0; }
+.two-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+.affirmation { position: absolute; right: 34px; bottom: 35px; left: 34px; padding: 12px; text-align: center; border-radius: 7px; font: 11px "Fraunces", serif; }
+.cover-mark { position: absolute; top: 31px; left: 34px; font: 600 10px "DM Mono", monospace; letter-spacing: .13em; }
+.cover-copy { position: absolute; top: 154px; right: 34px; left: 34px; }
+.cover-eyebrow { font: 500 8px "DM Mono", monospace; letter-spacing: .12em; opacity: .72; }
+.cover-copy h2 { margin: 15px 0 17px; font: 600 42px/.88 "Fraunces", serif; letter-spacing: -.06em; }
+.cover-copy p { margin: 16px 0 0; max-width: 190px; font-size: 13px; line-height: 1.35; }
+.cover-divider { width: 58px; height: 3px; }
+.cover-footer { position: absolute; right: 34px; bottom: 32px; left: 34px; font: 8px "DM Mono", monospace; line-height: 1.4; letter-spacing: .05em; opacity: .7; }
+
+.vibe-calm { background: #e9eee8; color: #3c4a45; }
+.vibe-calm .paper { border-radius: 20px; }
+.vibe-calm .interior-paper { border: 1px solid #d9e4da; }
+.vibe-calm .garden-rule, .vibe-calm .cover-divider { background: #a4c5ac; }
+.vibe-calm .writing-card, .vibe-calm .two-cards > div { background: #eef5ed; border: 1px solid #dce9dc; }
+.vibe-calm .writing-card i, .vibe-calm .two-cards i { background: #c9dccc; }
+.vibe-calm .affirmation { background: #eee7f5; color: #665674; }
+.vibe-calm .cover-paper { background: linear-gradient(145deg, #718e7b 0%, #4d6f63 100%); }
+.vibe-calm .cover-paper:after { position: absolute; right: -50px; bottom: -60px; width: 245px; height: 245px; border: 1px solid #ffffff44; border-radius: 50%; content: ""; box-shadow: 0 0 0 22px #ffffff10, 0 0 0 44px #ffffff08; }
+.vibe-calm .cover-botanical { position: absolute; color: #d9ecda; font: 54px "Fraunces", serif; }
+.vibe-calm .botanical-a { top: 54px; right: 44px; transform: rotate(25deg); }
+.vibe-calm .botanical-b { right: 72px; bottom: 88px; transform: rotate(-20deg); opacity: .6; }
+.vibe-calm .cover-copy h2 { color: #fffdf8; }
+
+.vibe-editorial { background: #eeeae2; color: #222a2b; }
+.vibe-editorial .vibe-intro h1, .vibe-editorial .paper h2, .vibe-editorial .cover-copy h2 { font-family: "Space Grotesk", sans-serif; }
+.vibe-editorial .paper { border-radius: 0; }
+.vibe-editorial .interior-paper { border: 1px solid #d8d0c2; }
+.vibe-editorial .editorial-number { position: absolute; top: 56px; right: 30px; font: 700 74px/.8 "Space Grotesk"; color: #e8e0d4; }
+.vibe-editorial .paper h2 { position: relative; font-size: 31px; text-transform: uppercase; }
+.vibe-editorial .paper h2 em { color: #d66d54; }
+.editorial-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 12px; margin-top: 25px; }
+.editorial-grid > div { min-height: 74px; padding-top: 10px; border-top: 1px solid #293333; }
+.editorial-grid .wide-field { grid-column: 1 / -1; }
+.editorial-grid label { display: block; margin-bottom: 15px; font: 500 8px "DM Mono"; letter-spacing: .08em; }
+.editorial-grid i { background: #c9c0b2; }
+.editorial-grid .scale { font: 9px "DM Mono"; color: #d66d54; }
+.editorial-quote { position: absolute; right: 34px; bottom: 34px; left: 34px; padding-top: 12px; border-top: 2px solid #d66d54; font: 15px "Space Grotesk"; }
+.vibe-editorial .cover-paper { background: #242d2d; }
+.editorial-cover-block { position: absolute; top: 0; right: 0; width: 100%; height: 170px; background: #d66d54; }
+.vibe-editorial .cover-mark { position: relative; z-index: 1; }
+.vibe-editorial .cover-copy { top: 203px; }
+.vibe-editorial .cover-copy h2 { font-size: 43px; text-transform: uppercase; }
+.vibe-editorial .cover-divider { background: #d66d54; }
+
+.vibe-momentum { background: #e2f3ed; color: #173b45; }
+.vibe-momentum .paper { border-radius: 18px; }
+.vibe-momentum .interior-paper { border: 2px solid #173b45; }
+.momentum-banner { display: flex; justify-content: space-between; align-items: center; margin: -34px -34px 24px; padding: 12px 18px; background: #ff6d5c; color: #fff; font: 600 9px "DM Mono"; letter-spacing: .04em; }
+.vibe-momentum .paper h2 { font-family: "Space Grotesk", sans-serif; font-size: 35px; text-transform: uppercase; }
+.vibe-momentum .paper h2 em { color: #2fa594; }
+.bright-fields { display: grid; gap: 10px; margin-top: 22px; }
+.bright-fields > div { display: grid; grid-template-columns: 25px 1fr; padding: 12px; border: 1px solid #173b45; border-radius: 9px; background: #f8fff8; }
+.bright-fields span { grid-row: span 2; font-size: 17px; color: #ff6d5c; }
+.bright-fields label { font-weight: 600; font-size: 10px; }
+.bright-fields i { grid-column: 2; background: #b8d7cf; }
+.check-strip { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; font-size: 8px; }
+.check-strip strong { width: 100%; font-size: 9px; }
+.check-strip span { padding: 6px 7px; border-radius: 99px; background: #d8f0e1; }
+.momentum-footer { position: absolute; right: 34px; bottom: 30px; left: 34px; color: #2fa594; font: 600 12px "Space Grotesk"; }
+.vibe-momentum .cover-paper { background: #275da8; }
+.sunburst { position: absolute; top: -70px; right: -60px; width: 250px; height: 250px; border: 30px dotted #ffd45c; border-radius: 50%; }
+.vibe-momentum .cover-copy { top: 172px; }
+.vibe-momentum .cover-copy h2 { font-family: "Space Grotesk", sans-serif; font-size: 42px; text-transform: uppercase; }
+.vibe-momentum .cover-divider { background: #ffd45c; }
+.cover-sticker { position: absolute; right: 30px; bottom: 102px; display: grid; place-items: center; width: 85px; height: 85px; border-radius: 50%; transform: rotate(8deg); background: #ffd45c; color: #173b45; text-align: center; font: 700 10px/1.1 "Space Grotesk"; }
