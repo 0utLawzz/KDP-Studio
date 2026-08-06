@@ -47,7 +47,8 @@ An internal publishing tool for Nadeem (Bright Mindful Pages brand) to design, g
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- Work in small, independently verifiable stages; commit and push after each meaningful milestone.
+- For visual work, show design directions first and wait for the user's choice before changing production generators.
 
 ## Gotchas
 
