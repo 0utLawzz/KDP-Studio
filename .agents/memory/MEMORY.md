@@ -1,0 +1,1 @@
+- [PDF icon rendering](pdf-icon-rendering.md) — use vector-drawn or embedded-font icons in ReportLab PDFs; built-in Helvetica can render Unicode symbols as squares.
