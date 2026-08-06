@@ -25,6 +25,7 @@ An internal publishing tool for Nadeem (Bright Mindful Pages brand) to design, g
 - `artifacts/kdp-studio/` — React/Vite frontend (port from `$PORT`, base path `/`)
 - `artifacts/api-server/` — Express 5 API server (port 8080, paths `/api`)
 - `artifacts/api-server/python/` — Python/reportlab generators for interiors, covers, listings
+- `docs/` — public v2 specification and repository documentation
 - `lib/db/` — Drizzle ORM schema + migrations (source of truth: `lib/db/src/schema/books.ts`)
 - `lib/api-spec/openapi.yaml` — OpenAPI spec (source of truth for API contract)
 - `lib/api-client-react/` — generated React Query hooks (run codegen to regenerate)
@@ -33,7 +34,7 @@ An internal publishing tool for Nadeem (Bright Mindful Pages brand) to design, g
 ## Architecture decisions
 
 - API routes must be explicitly registered in `artifacts/api-server/src/routes/index.ts` — new route files are not auto-discovered.
-- Python generators are called by the Express API via child_process; `reportlab` must be installed (`python3 -m pip install reportlab`).
+- Python generators are called by the Express API via child_process; `reportlab` is installed by the root `postinstall` script.
 - `DATABASE_URL` is runtime-managed by Replit — never set it manually.
 - API client uses relative paths (e.g. `/api/stats`) — no base URL needed; Replit's path proxy routes `/api` to the API server.
 
@@ -44,6 +45,7 @@ An internal publishing tool for Nadeem (Bright Mindful Pages brand) to design, g
 - **Listing Generator** — produce KDP-ready title/subtitle/keyword/category metadata
 - **Palettes** — browse built-in color palettes used in cover generation
 - **Tasks** — internal task tracker for the publishing workflow
+- **Public repository metadata** — README, security guidance, community templates, favicon, and social preview
 
 ## User preferences
 
