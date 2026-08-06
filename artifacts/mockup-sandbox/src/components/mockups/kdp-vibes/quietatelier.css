@@ -1,0 +1,277 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@400;500;600&display=swap");
+
+:root {
+  font-family: "DM Sans", sans-serif;
+  color: #2e2a27;
+  background: #ebe6dc;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 1060px; }
+
+.atelier-frame {
+  min-height: 760px;
+  padding: 34px 44px 28px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 11% 16%, #f5efe4 0, transparent 26%),
+    #ebe6dc;
+  color: #2e2a27;
+}
+
+.atelier-intro {
+  display: flex;
+  align-items: end;
+  gap: 22px;
+  margin-bottom: 24px;
+}
+
+.atelier-kicker {
+  align-self: start;
+  min-width: 174px;
+  padding-top: 7px;
+  color: #896e5c;
+  font: 500 10px "DM Mono", monospace;
+  letter-spacing: .08em;
+}
+
+.atelier-intro h1 {
+  margin: 0;
+  color: #312923;
+  font: 400 27px "Instrument Serif", serif;
+  letter-spacing: -.025em;
+}
+
+.atelier-intro p {
+  max-width: 300px;
+  margin: 0 0 2px auto;
+  color: #6e625a;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.atelier-spread {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 36px;
+}
+
+.atelier-paper {
+  position: relative;
+  width: 390px;
+  height: 560px;
+  padding: 34px;
+  overflow: hidden;
+  box-shadow: 0 18px 35px #4a392a18;
+}
+
+.atelier-interior {
+  border: 1px solid #d8cbbb;
+  background: #fbf8f1;
+}
+
+.atelier-page-number {
+  position: absolute;
+  top: 49px;
+  right: 30px;
+  color: #e6ddd0;
+  font: 400 76px/.8 "Instrument Serif", serif;
+}
+
+.atelier-topline {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  color: #8b7463;
+  font: 500 8px "DM Mono", monospace;
+  letter-spacing: .07em;
+}
+
+.atelier-rule {
+  width: 52px;
+  height: 3px;
+  margin-top: 18px;
+  background: #c57f5b;
+}
+
+.atelier-interior h2 {
+  position: relative;
+  margin: 27px 0 0;
+  color: #332b26;
+  font: 400 33px/.95 "Instrument Serif", serif;
+  letter-spacing: -.035em;
+}
+
+.atelier-interior h2 em,
+.atelier-cover h2 em {
+  color: #bd6d4d;
+  font-style: normal;
+}
+
+.atelier-prompt {
+  max-width: 250px;
+  margin: 14px 0 24px;
+  color: #78695e;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.atelier-checkin {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 12px;
+}
+
+.atelier-field {
+  min-height: 74px;
+  padding-top: 10px;
+  border-top: 1px solid #3d3732;
+}
+
+.atelier-field-wide { grid-column: 1 / -1; }
+
+.atelier-field label {
+  display: block;
+  margin-bottom: 15px;
+  color: #725b4d;
+  font: 500 8px "DM Mono", monospace;
+  letter-spacing: .08em;
+}
+
+.atelier-field i {
+  display: block;
+  height: 1px;
+  margin: 11px 0;
+  background: #d7c8b7;
+}
+
+.atelier-scale {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #bd6d4d;
+  font: 9px "DM Mono", monospace;
+}
+
+.atelier-scale span {
+  display: block;
+  flex: 1;
+  height: 1px;
+  background: #cdb9a7;
+}
+
+.atelier-footer-quote {
+  position: absolute;
+  right: 34px;
+  bottom: 34px;
+  left: 34px;
+  padding-top: 12px;
+  border-top: 2px solid #c57f5b;
+  color: #544941;
+  font: 15px "Instrument Serif", serif;
+}
+
+.atelier-cover {
+  color: #fbf5e9;
+  background: #3b4845;
+}
+
+.atelier-cover:before {
+  position: absolute;
+  inset: 14px;
+  border: 1px solid #d8bc8d66;
+  content: "";
+}
+
+.atelier-cover-sun {
+  position: absolute;
+  top: 93px;
+  right: -73px;
+  width: 270px;
+  height: 270px;
+  border: 1px solid #ddb98066;
+  border-radius: 50%;
+  box-shadow: 0 0 0 16px #ddb98012, 0 0 0 31px #ddb9800b, 0 0 0 46px #ddb98008;
+}
+
+.atelier-cover-stamp {
+  position: absolute;
+  top: 31px;
+  left: 34px;
+  color: #f1d19c;
+  font: 500 13px/1.1 "Space Grotesk", sans-serif;
+  letter-spacing: .12em;
+}
+
+.atelier-cover-stamp span {
+  color: #d9c9ad;
+  font: 7px "DM Mono", monospace;
+  letter-spacing: .08em;
+}
+
+.atelier-cover-copy {
+  position: absolute;
+  top: 190px;
+  right: 34px;
+  left: 34px;
+}
+
+.atelier-eyebrow {
+  color: #dbbd8d;
+  font: 500 8px "DM Mono", monospace;
+  letter-spacing: .12em;
+}
+
+.atelier-cover h2 {
+  margin: 15px 0 17px;
+  color: #fbf5e9;
+  font: 400 44px/.87 "Instrument Serif", serif;
+  letter-spacing: -.055em;
+}
+
+.atelier-cover-rule {
+  width: 58px;
+  height: 3px;
+  background: #d7a56b;
+}
+
+.atelier-cover-copy p {
+  max-width: 210px;
+  margin: 17px 0 0;
+  color: #e7d8c0;
+  font-size: 13px;
+  line-height: 1.38;
+}
+
+.atelier-cover-side {
+  position: absolute;
+  top: 228px;
+  right: -29px;
+  transform: rotate(90deg);
+  color: #d6bd95;
+  font: 8px "DM Mono", monospace;
+  letter-spacing: .08em;
+}
+
+.atelier-cover-footer {
+  position: absolute;
+  right: 34px;
+  bottom: 31px;
+  left: 34px;
+  color: #e8dac4;
+  font: 8px/1.4 "DM Mono", monospace;
+  letter-spacing: .06em;
+}
+
+.atelier-cover-footer span {
+  color: #c6a87c;
+}
+
+.atelier-note {
+  margin-top: 22px;
+  color: #76685e;
+  text-align: center;
+  font-size: 11px;
+  opacity: .72;
+}
