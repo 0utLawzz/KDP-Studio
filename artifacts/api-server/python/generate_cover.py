@@ -69,6 +69,11 @@ PALETTES = {
         "primary": "#6BAA8C", "secondary": "#8B5A3C", "accent": "#A8D5C0",
         "highlight": "#F0FFF8", "text": "#1C3D2D", "header_text": "#FFFFFF",
     },
+    "bright_momentum": {
+        "primary": "#275DA8", "secondary": "#2FA594", "accent": "#FFD45C",
+        "highlight": "#F8FFF8", "text": "#173B45", "header_text": "#FFFFFF",
+        "coral": "#FF6D5C",
+    },
 }
 
 
@@ -79,6 +84,72 @@ def hex_color(h):
 def get_palette(key):
     raw = PALETTES.get(key, PALETTES["lavender_mint"])
     return {k: hex_color(v) if k != "name" else v for k, v in raw.items()}
+
+
+def draw_bright_momentum_front(c, p, front_start, front_width, total_h, title, subtitle, author, day_count):
+    """Draw the approved cobalt, coral, mint, and yellow front-cover lockup."""
+    safe_left = front_start + MARGIN
+    safe_right = front_start + front_width - MARGIN
+    front_cx = front_start + front_width / 2
+    coral = p["coral"]
+    yellow = p["accent"]
+    mint = p["secondary"]
+
+    c.setFillColor(p["primary"])
+    c.rect(front_start, 0, front_width, total_h, fill=1, stroke=0)
+
+    # Bright dotted path gives the cover a strong thumbnail silhouette.
+    dots = [
+        (0.28, 0.95, 0.14), (0.54, 0.80, 0.16), (0.80, 0.65, 0.15),
+        (1.06, 0.51, 0.17), (1.32, 0.38, 0.13),
+    ]
+    for x_in, y_ratio, radius_in in dots:
+        c.setFillColor(yellow)
+        c.circle(front_start + x_in * inch, total_h * y_ratio, radius_in * inch, fill=1, stroke=0)
+
+    c.setFillColor(p["header_text"])
+    c.setFont("Helvetica-Bold", 8)
+    c.drawString(safe_left, total_h - MARGIN - 0.2 * inch, "BMP")
+
+    c.setFillColor(colors.Color(1, 1, 1, alpha=0.82))
+    c.setFont("Helvetica", 6.5)
+    c.drawString(safe_left, total_h * 0.59, author.upper())
+
+    words = title.strip().split()
+    first_line = words[0] if words else "SOBRIETY"
+    second_line = " ".join(words[1:]) if len(words) > 1 else ""
+    title_size = 25 if front_width >= 6 * inch else 20
+    title_y = total_h * 0.51
+    c.setFont("Helvetica-Bold", title_size)
+    c.setFillColor(p["header_text"])
+    c.drawString(safe_left, title_y, first_line.upper())
+    if second_line:
+        c.setFillColor(mint)
+        c.drawString(safe_left, title_y - title_size - 3, second_line.upper())
+
+    c.setFillColor(yellow)
+    c.rect(safe_left, title_y - title_size - 0.24 * inch, 0.58 * inch, 0.045 * inch, fill=1, stroke=0)
+    c.setFillColor(coral)
+    c.roundRect(safe_left, title_y - title_size - 0.38 * inch, 1.1 * inch, 0.08 * inch, 4, fill=1, stroke=0)
+
+    subtitle_text = subtitle.strip() or f"{day_count}-Day Daily Tracker"
+    c.setFillColor(p["header_text"])
+    c.setFont("Helvetica-Bold", 9)
+    c.drawString(safe_left, title_y - title_size - 0.53 * inch, subtitle_text[:48])
+
+    badge_r = 0.54 * inch
+    badge_cx = safe_right - badge_r
+    badge_cy = total_h * 0.27
+    c.setFillColor(yellow)
+    c.circle(badge_cx, badge_cy, badge_r, fill=1, stroke=0)
+    c.setFillColor(p["text"])
+    c.setFont("Helvetica-Bold", 7)
+    c.drawCentredString(badge_cx, badge_cy + 0.05 * inch, "ONE DAY")
+    c.drawCentredString(badge_cx, badge_cy - 0.08 * inch, "AT A TIME")
+
+    c.setFillColor(colors.Color(1, 1, 1, alpha=0.75))
+    c.setFont("Helvetica", 6.5)
+    c.drawString(safe_left, MARGIN + 0.18 * inch, "A practical journal for steady, hopeful progress")
 
 
 def generate_cover(args, output_path):
@@ -131,56 +202,57 @@ def generate_cover(args, output_path):
 
     front_cx = front_start + trim_w_pt / 2
 
-    # Title
-    c.setFillColor(p["header_text"])
-    font_size = 28 if len(title) < 20 else 22 if len(title) < 30 else 16
-    c.setFont("Helvetica-Bold", font_size)
-    # Word wrap title
-    words = title.split()
-    lines = []
-    current = ""
-    for word in words:
-        test = (current + " " + word).strip()
-        if c.stringWidth(test, "Helvetica-Bold", font_size) > trim_w_pt - 0.6 * inch:
-            if current:
-                lines.append(current)
-            current = word
-        else:
-            current = test
-    if current:
-        lines.append(current)
-
-    title_y = total_h - header_h * 0.35
-    for i, line in enumerate(lines):
-        c.drawCentredString(front_cx, title_y - i * (font_size + 4) * 0.013 * inch * 72, line)
-
-    # Subtitle
-    if subtitle:
+    if palette_key == "bright_momentum":
+        draw_bright_momentum_front(
+            c, p, front_start, trim_w_pt + BLEED, total_h,
+            title, subtitle, author, day_count,
+        )
+    else:
+        # Preserve the established cover treatment for other palettes.
         c.setFillColor(p["header_text"])
-        c.setFont("Helvetica", 11)
-        c.drawCentredString(front_cx, total_h - header_h - 0.35 * inch, subtitle)
+        font_size = 28 if len(title) < 20 else 22 if len(title) < 30 else 16
+        c.setFont("Helvetica-Bold", font_size)
+        words = title.split()
+        lines = []
+        current = ""
+        for word in words:
+            test = (current + " " + word).strip()
+            if c.stringWidth(test, "Helvetica-Bold", font_size) > trim_w_pt - 0.6 * inch:
+                if current:
+                    lines.append(current)
+                current = word
+            else:
+                current = test
+        if current:
+            lines.append(current)
 
-    # Day count badge
-    badge_y = total_h - header_h - 0.85 * inch
-    c.setFillColor(p["secondary"])
-    c.roundRect(front_cx - 0.7 * inch, badge_y - 0.15 * inch, 1.4 * inch, 0.35 * inch, 8, fill=1, stroke=0)
-    c.setFillColor(p["header_text"])
-    c.setFont("Helvetica-Bold", 10)
-    c.drawCentredString(front_cx, badge_y + 0.04 * inch, f"{day_count}-Day Journey")
+        title_y = total_h - header_h * 0.35
+        for i, line in enumerate(lines):
+            c.drawCentredString(front_cx, title_y - i * (font_size + 4) * 0.013 * inch * 72, line)
 
-    # Decorative elements — circles
-    c.setFillColor(p["secondary"])
-    c.setStrokeColor(p["secondary"])
-    c.setLineWidth(0)
-    circle_data = [(front_start + 0.2 * inch, BLEED + 0.2 * inch, 0.15), (front_start + trim_w_pt - 0.2 * inch, BLEED + 0.2 * inch, 0.12)]
-    for cx, cy, r in circle_data:
-        c.setFillColor(colors.Color(p["secondary"].red, p["secondary"].green, p["secondary"].blue, 0.4))
-        c.circle(cx, cy, r * inch, fill=1, stroke=0)
+        if subtitle:
+            c.setFillColor(p["header_text"])
+            c.setFont("Helvetica", 11)
+            c.drawCentredString(front_cx, total_h - header_h - 0.35 * inch, subtitle)
 
-    # Author name — bottom of front
-    c.setFillColor(p["text"])
-    c.setFont("Helvetica", 9)
-    c.drawCentredString(front_cx, BLEED + 0.3 * inch, author)
+        badge_y = total_h - header_h - 0.85 * inch
+        c.setFillColor(p["secondary"])
+        c.roundRect(front_cx - 0.7 * inch, badge_y - 0.15 * inch, 1.4 * inch, 0.35 * inch, 8, fill=1, stroke=0)
+        c.setFillColor(p["header_text"])
+        c.setFont("Helvetica-Bold", 10)
+        c.drawCentredString(front_cx, badge_y + 0.04 * inch, f"{day_count}-Day Journey")
+
+        c.setFillColor(p["secondary"])
+        c.setStrokeColor(p["secondary"])
+        c.setLineWidth(0)
+        circle_data = [(front_start + 0.2 * inch, BLEED + 0.2 * inch, 0.15), (front_start + trim_w_pt - 0.2 * inch, BLEED + 0.2 * inch, 0.12)]
+        for cx, cy, r in circle_data:
+            c.setFillColor(colors.Color(p["secondary"].red, p["secondary"].green, p["secondary"].blue, 0.4))
+            c.circle(cx, cy, r * inch, fill=1, stroke=0)
+
+        c.setFillColor(p["text"])
+        c.setFont("Helvetica", 9)
+        c.drawCentredString(front_cx, BLEED + 0.3 * inch, author)
 
     # ── Spine text (only if page_count >= 79) ─────────────────────────────────
     if page_count >= 79:
@@ -206,10 +278,17 @@ def generate_cover(args, output_path):
     c.drawCentredString(back_cx, total_h - BLEED - 0.5 * inch, "About This Planner")
 
     blurb = (
-        f"Transform your daily routine with this {day_count}-day "
-        "structured planner. Each page is thoughtfully designed to help "
-        "you set intentions, track progress, and reflect on your journey. "
-        "Ideal for anyone ready to build better habits and live more intentionally."
+        f"Make space for steady progress with this {day_count}-day "
+        "recovery tracker. Each page helps you notice bright spots, "
+        "honor your support system, and choose one next right step. "
+        "A practical journal for hopeful, intentional progress."
+        if palette_key == "bright_momentum"
+        else (
+            f"Transform your daily routine with this {day_count}-day "
+            "structured planner. Each page is thoughtfully designed to help "
+            "you set intentions, track progress, and reflect on your journey. "
+            "Ideal for anyone ready to build better habits and live more intentionally."
+        )
     )
 
     c.setFont("Helvetica", 9)
