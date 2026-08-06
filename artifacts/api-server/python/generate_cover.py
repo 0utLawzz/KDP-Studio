@@ -86,6 +86,25 @@ def get_palette(key):
     return {k: hex_color(v) if k != "name" else v for k, v in raw.items()}
 
 
+def wrap_text(c, text, font, size, max_width):
+    """Return word-wrapped lines whose measured widths fit max_width."""
+    words = text.split()
+    if not words:
+        return []
+
+    lines = []
+    current = words[0]
+    for word in words[1:]:
+        candidate = f"{current} {word}"
+        if c.stringWidth(candidate, font, size) <= max_width:
+            current = candidate
+        else:
+            lines.append(current)
+            current = word
+    lines.append(current)
+    return lines
+
+
 def draw_bright_momentum_front(c, p, front_start, front_width, total_h, title, subtitle, author, day_count):
     """Draw the approved cobalt, coral, mint, and yellow front-cover lockup."""
     safe_left = front_start + MARGIN
@@ -210,25 +229,44 @@ def generate_cover(args, output_path):
     else:
         # Preserve the established cover treatment for other palettes.
         c.setFillColor(p["header_text"])
-        font_size = 28 if len(title) < 20 else 22 if len(title) < 30 else 16
-        c.setFont("Helvetica-Bold", font_size)
-        words = title.split()
-        lines = []
-        current = ""
-        for word in words:
-            test = (current + " " + word).strip()
-            if c.stringWidth(test, "Helvetica-Bold", font_size) > trim_w_pt - 0.6 * inch:
-                if current:
-                    lines.append(current)
-                current = word
-            else:
-                current = test
-        if current:
-            lines.append(current)
+        title_max_w = trim_w_pt - 2 * MARGIN
+        font_size = 28
+        lines = wrap_text(c, title, "Helvetica-Bold", font_size, title_max_w)
+        while (
+            (len(lines) > 3
+             or any(c.stringWidth(line, "Helvetica-Bold", font_size) > title_max_w for line in lines))
+            and font_size > 8
+        ):
+            font_size -= 2
+            lines = wrap_text(c, title, "Helvetica-Bold", font_size, title_max_w)
+
+        if (
+            len(lines) > 3
+            or any(c.stringWidth(line, "Helvetica-Bold", font_size) > title_max_w for line in lines)
+        ):
+            raise ValueError(
+                f"Title cannot fit within the {title_max_w / inch:.2f}-inch safe width "
+                f"at the minimum font size: {title!r}"
+            )
 
         title_y = total_h - header_h * 0.35
+        title_bounds = []
         for i, line in enumerate(lines):
-            c.drawCentredString(front_cx, title_y - i * (font_size + 4) * 0.013 * inch * 72, line)
+            line_width = c.stringWidth(line, "Helvetica-Bold", font_size)
+            line_left = front_cx - line_width / 2
+            line_right = front_cx + line_width / 2
+            c.drawCentredString(front_cx, title_y - i * (font_size + 4), line)
+            title_bounds.append((line, line_left, line_right))
+
+        safe_left = front_start + MARGIN
+        safe_right = front_start + trim_w_pt - MARGIN
+        assert all(
+            line_left >= safe_left and line_right <= safe_right
+            for _, line_left, line_right in title_bounds
+        ), (
+            "A centered title line crosses the front-cover safe margin: "
+            f"{title_bounds!r}; expected {safe_left:.2f}-{safe_right:.2f}pt"
+        )
 
         if subtitle:
             c.setFillColor(p["header_text"])
