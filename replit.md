@@ -51,7 +51,8 @@ _Populate as you build — explicit user instructions worth remembering across s
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- **Python packages (reportlab, pillow)** are installed automatically via `postinstall` in `package.json` when `pnpm install` runs. The `pip` wrapper installs to `.pythonlibs/` (not the Nix store). Do not use `python3 -m pip` or `pip3` — use plain `pip` which routes through the Replit pip wrapper.
+- If Python generation fails in production, verify `.pythonlibs/` is available and `pip install -r artifacts/api-server/python/requirements.txt` has run.
 
 ## Pointers
 
