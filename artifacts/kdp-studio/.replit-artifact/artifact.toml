@@ -1,7 +1,7 @@
 kind = "web"
 previewPath = "/"
 title = "KDP Digital Products Studio"
-description = "An internal publishing tool for Nadeem (Bright Mindful Pages brand) to design, generate, and manage Amazon KDP low-content books."
+description = "An internal publishing tool for designing, generating, and managing Amazon KDP low-content books."
 version = "1.0.0"
 id = "artifacts/kdp-studio"
 router = "path"
