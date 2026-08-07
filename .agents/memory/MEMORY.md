@@ -1,0 +1,1 @@
+- [Generator validation environment](generator-validation-environment.md) — install declared Python and Node dependencies before checks; discard incidental uv files unless adopted.
