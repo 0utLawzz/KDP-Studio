@@ -16,6 +16,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, HRFlowable,
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
 from reportlab.pdfgen import canvas
+from text_bounds import validate_text_bounds
 
 # ── Constants ─────────────────────────────────────────────────────────────────
 MARGIN = 0.4 * inch   # KDP spec: 0.4in on all sides — FIXED, do not change
@@ -126,6 +127,56 @@ PALETTES = {
         "text": colors.HexColor("#173B45"),
         "header_text": colors.white,
         "coral": colors.HexColor("#FF6D5C"),
+    },
+    "cobalt_coral": {
+        "primary": colors.HexColor("#BFDBFE"),
+        "secondary": colors.HexColor("#FDA4AF"),
+        "accent": colors.HexColor("#FDE68A"),
+        "highlight": colors.HexColor("#DBEAFE"),
+        "text": colors.HexColor("#172554"),
+        "header_text": colors.HexColor("#1D4ED8"),
+        "dark": colors.HexColor("#1E3A8A"),
+        "line": colors.HexColor("#93C5FD"),
+    },
+    "sunshine_mint": {
+        "primary": colors.HexColor("#FEF08A"),
+        "secondary": colors.HexColor("#A7F3D0"),
+        "accent": colors.HexColor("#BAE6FD"),
+        "highlight": colors.HexColor("#ECFCCB"),
+        "text": colors.HexColor("#14532D"),
+        "header_text": colors.HexColor("#166534"),
+        "dark": colors.HexColor("#14532D"),
+        "line": colors.HexColor("#86EFAC"),
+    },
+    "berry_pop": {
+        "primary": colors.HexColor("#F9A8D4"),
+        "secondary": colors.HexColor("#C4B5FD"),
+        "accent": colors.HexColor("#FED7AA"),
+        "highlight": colors.HexColor("#FCE7F3"),
+        "text": colors.HexColor("#581C87"),
+        "header_text": colors.HexColor("#9D174D"),
+        "dark": colors.HexColor("#581C87"),
+        "line": colors.HexColor("#D8B4FE"),
+    },
+    "ocean_lime": {
+        "primary": colors.HexColor("#7DD3FC"),
+        "secondary": colors.HexColor("#BEF264"),
+        "accent": colors.HexColor("#99F6E4"),
+        "highlight": colors.HexColor("#DBEAFE"),
+        "text": colors.HexColor("#082F49"),
+        "header_text": colors.HexColor("#0369A1"),
+        "dark": colors.HexColor("#082F49"),
+        "line": colors.HexColor("#67E8F9"),
+    },
+    "tangerine_sky": {
+        "primary": colors.HexColor("#FDBA74"),
+        "secondary": colors.HexColor("#7DD3FC"),
+        "accent": colors.HexColor("#FEF3C7"),
+        "highlight": colors.HexColor("#E0F2FE"),
+        "text": colors.HexColor("#172554"),
+        "header_text": colors.HexColor("#C2410C"),
+        "dark": colors.HexColor("#172554"),
+        "line": colors.HexColor("#93C5FD"),
     },
 }
 

@@ -13,6 +13,7 @@ import argparse
 from reportlab.lib.units import inch
 from reportlab.lib import colors
 from reportlab.pdfgen import canvas
+from text_bounds import validate_text_bounds
 
 MARGIN = 0.4 * inch   # Fixed — do not change
 PAGES_PER_INCH = 110  # KDP standard
@@ -74,6 +75,56 @@ PALETTES = {
         "highlight": "#F8FFF8", "text": "#173B45", "header_text": "#FFFFFF",
         "coral": "#FF6D5C",
     },
+    "cobalt_coral": {
+        "primary": "#BFDBFE",
+        "secondary": "#FDA4AF",
+        "accent": "#FDE68A",
+        "highlight": "#DBEAFE",
+        "text": "#172554",
+        "header_text": "#1D4ED8",
+        "dark": "#1E3A8A",
+        "line": "#93C5FD",
+    },
+    "sunshine_mint": {
+        "primary": "#FEF08A",
+        "secondary": "#A7F3D0",
+        "accent": "#BAE6FD",
+        "highlight": "#ECFCCB",
+        "text": "#14532D",
+        "header_text": "#166534",
+        "dark": "#14532D",
+        "line": "#86EFAC",
+    },
+    "berry_pop": {
+        "primary": "#F9A8D4",
+        "secondary": "#C4B5FD",
+        "accent": "#FED7AA",
+        "highlight": "#FCE7F3",
+        "text": "#581C87",
+        "header_text": "#9D174D",
+        "dark": "#581C87",
+        "line": "#D8B4FE",
+    },
+    "ocean_lime": {
+        "primary": "#7DD3FC",
+        "secondary": "#BEF264",
+        "accent": "#99F6E4",
+        "highlight": "#DBEAFE",
+        "text": "#082F49",
+        "header_text": "#0369A1",
+        "dark": "#082F49",
+        "line": "#67E8F9",
+    },
+    "tangerine_sky": {
+        "primary": "#FDBA74",
+        "secondary": "#7DD3FC",
+        "accent": "#FEF3C7",
+        "highlight": "#E0F2FE",
+        "text": "#172554",
+        "header_text": "#C2410C",
+        "dark": "#172554",
+        "line": "#93C5FD",
+    },
 }
 
 
@@ -128,10 +179,18 @@ def draw_bright_momentum_front(c, p, front_start, front_width, total_h, title, s
 
     c.setFillColor(p["header_text"])
     c.setFont("Helvetica-Bold", 8)
+    validate_text_bounds(
+        c, "BMP", "Helvetica-Bold", 8, ("left", safe_left),
+        safe_left, safe_right, "bright-momentum brand mark",
+    )
     c.drawString(safe_left, total_h - MARGIN - 0.2 * inch, "BMP")
 
     c.setFillColor(colors.Color(1, 1, 1, alpha=0.82))
     c.setFont("Helvetica", 6.5)
+    validate_text_bounds(
+        c, author.upper(), "Helvetica", 6.5, ("left", safe_left),
+        safe_left, safe_right, "bright-momentum author line",
+    )
     c.drawString(safe_left, total_h * 0.59, author.upper())
 
     words = title.strip().split()
@@ -141,9 +200,17 @@ def draw_bright_momentum_front(c, p, front_start, front_width, total_h, title, s
     title_y = total_h * 0.51
     c.setFont("Helvetica-Bold", title_size)
     c.setFillColor(p["header_text"])
+    validate_text_bounds(
+        c, first_line.upper(), "Helvetica-Bold", title_size, ("left", safe_left),
+        safe_left, safe_right, "bright-momentum title first line",
+    )
     c.drawString(safe_left, title_y, first_line.upper())
     if second_line:
         c.setFillColor(mint)
+        validate_text_bounds(
+            c, second_line.upper(), "Helvetica-Bold", title_size, ("left", safe_left),
+            safe_left, safe_right, "bright-momentum title second line",
+        )
         c.drawString(safe_left, title_y - title_size - 3, second_line.upper())
 
     c.setFillColor(yellow)
@@ -154,6 +221,10 @@ def draw_bright_momentum_front(c, p, front_start, front_width, total_h, title, s
     subtitle_text = subtitle.strip() or f"{day_count}-Day Daily Tracker"
     c.setFillColor(p["header_text"])
     c.setFont("Helvetica-Bold", 9)
+    validate_text_bounds(
+        c, subtitle_text[:48], "Helvetica-Bold", 9, ("left", safe_left),
+        safe_left, safe_right, "bright-momentum subtitle",
+    )
     c.drawString(safe_left, title_y - title_size - 0.53 * inch, subtitle_text[:48])
 
     badge_r = 0.54 * inch
@@ -163,11 +234,24 @@ def draw_bright_momentum_front(c, p, front_start, front_width, total_h, title, s
     c.circle(badge_cx, badge_cy, badge_r, fill=1, stroke=0)
     c.setFillColor(p["text"])
     c.setFont("Helvetica-Bold", 7)
+    validate_text_bounds(
+        c, "ONE DAY", "Helvetica-Bold", 7, badge_cx,
+        safe_left, safe_right, "bright-momentum badge line one",
+    )
     c.drawCentredString(badge_cx, badge_cy + 0.05 * inch, "ONE DAY")
+    validate_text_bounds(
+        c, "AT A TIME", "Helvetica-Bold", 7, badge_cx,
+        safe_left, safe_right, "bright-momentum badge line two",
+    )
     c.drawCentredString(badge_cx, badge_cy - 0.08 * inch, "AT A TIME")
 
     c.setFillColor(colors.Color(1, 1, 1, alpha=0.75))
     c.setFont("Helvetica", 6.5)
+    validate_text_bounds(
+        c, "A practical journal for steady, hopeful progress",
+        "Helvetica", 6.5, ("left", safe_left), safe_left, safe_right,
+        "bright-momentum footer",
+    )
     c.drawString(safe_left, MARGIN + 0.18 * inch, "A practical journal for steady, hopeful progress")
 
 
@@ -255,6 +339,11 @@ def generate_cover(args, output_path):
             line_width = c.stringWidth(line, "Helvetica-Bold", font_size)
             line_left = front_cx - line_width / 2
             line_right = front_cx + line_width / 2
+            validate_text_bounds(
+                c, line, "Helvetica-Bold", font_size, front_cx,
+                front_start + MARGIN, front_start + trim_w_pt - MARGIN,
+                f"front-cover title line {i + 1}",
+            )
             c.drawCentredString(front_cx, title_y - i * (font_size + 4), line)
             title_bounds.append((line, line_left, line_right))
 
@@ -271,6 +360,11 @@ def generate_cover(args, output_path):
         if subtitle:
             c.setFillColor(p["header_text"])
             c.setFont("Helvetica", 11)
+            validate_text_bounds(
+                c, subtitle, "Helvetica", 11, front_cx,
+                front_start + MARGIN, front_start + trim_w_pt - MARGIN,
+                "front-cover subtitle",
+            )
             c.drawCentredString(front_cx, total_h - header_h - 0.35 * inch, subtitle)
 
         badge_y = total_h - header_h - 0.85 * inch
@@ -278,6 +372,11 @@ def generate_cover(args, output_path):
         c.roundRect(front_cx - 0.7 * inch, badge_y - 0.15 * inch, 1.4 * inch, 0.35 * inch, 8, fill=1, stroke=0)
         c.setFillColor(p["header_text"])
         c.setFont("Helvetica-Bold", 10)
+        validate_text_bounds(
+            c, f"{day_count}-Day Journey", "Helvetica-Bold", 10, front_cx,
+            front_start + MARGIN, front_start + trim_w_pt - MARGIN,
+            "front-cover journey badge",
+        )
         c.drawCentredString(front_cx, badge_y + 0.04 * inch, f"{day_count}-Day Journey")
 
         c.setFillColor(p["secondary"])
@@ -290,6 +389,11 @@ def generate_cover(args, output_path):
 
         c.setFillColor(p["text"])
         c.setFont("Helvetica", 9)
+        validate_text_bounds(
+            c, author, "Helvetica", 9, front_cx,
+            front_start + MARGIN, front_start + trim_w_pt - MARGIN,
+            "front-cover author line",
+        )
         c.drawCentredString(front_cx, BLEED + 0.3 * inch, author)
 
     # ── Spine text (only if page_count >= 79) ─────────────────────────────────
@@ -302,8 +406,16 @@ def generate_cover(args, output_path):
         spine_font_size = min(10, spine_pt / inch * 6)
         c.setFont("Helvetica-Bold", spine_font_size)
         short_title = title if len(title) <= 30 else title[:27] + "..."
+        validate_text_bounds(
+            c, short_title, "Helvetica-Bold", spine_font_size, total_h / 2,
+            MARGIN, total_h - MARGIN, "spine title",
+        )
         c.drawCentredString(0, 0, short_title)
         c.setFont("Helvetica", spine_font_size * 0.8)
+        validate_text_bounds(
+            c, author, "Helvetica", spine_font_size * 0.8, total_h / 2,
+            MARGIN, total_h - MARGIN, "spine author line",
+        )
         c.drawCentredString(0, -(spine_font_size + 3), author)
         c.restoreState()
 
@@ -313,6 +425,10 @@ def generate_cover(args, output_path):
     # Back cover — description / blurb
     c.setFillColor(p["text"])
     c.setFont("Helvetica-Bold", 12)
+    validate_text_bounds(
+        c, "About This Planner", "Helvetica-Bold", 12, back_cx,
+        back_start + MARGIN, spine_start - MARGIN, "back-cover heading",
+    )
     c.drawCentredString(back_cx, total_h - BLEED - 0.5 * inch, "About This Planner")
 
     blurb = (
@@ -346,6 +462,10 @@ def generate_cover(args, output_path):
 
     y = total_h - BLEED - 1.0 * inch
     for line in blurb_lines:
+        validate_text_bounds(
+            c, line, "Helvetica", 9, back_cx,
+            back_start + MARGIN, spine_start - MARGIN, "back-cover blurb",
+        )
         c.drawCentredString(back_cx, y, line)
         y -= 0.2 * inch
 
@@ -354,10 +474,18 @@ def generate_cover(args, output_path):
     c.rect(back_cx - 0.65 * inch, BLEED + 0.15 * inch, 1.3 * inch, 0.8 * inch, fill=1, stroke=0)
     c.setFillColor(p["text"])
     c.setFont("Helvetica", 6)
+    validate_text_bounds(
+        c, "ISBN barcode here", "Helvetica", 6, back_cx,
+        back_start + MARGIN, spine_start - MARGIN, "back-cover barcode label",
+    )
     c.drawCentredString(back_cx, BLEED + 0.08 * inch, "ISBN barcode here")
 
     # Publisher name
     c.setFont("Helvetica-Bold", 8)
+    validate_text_bounds(
+        c, author, "Helvetica-Bold", 8, back_cx,
+        back_start + MARGIN, spine_start - MARGIN, "back-cover author line",
+    )
     c.drawCentredString(back_cx, BLEED + 1.1 * inch, author)
 
     c.save()
