@@ -16,7 +16,11 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, HRFlowable,
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
 from reportlab.pdfgen import canvas
-from text_bounds import validate_text_bounds
+from text_bounds import (
+    draw_safe_centered_string,
+    draw_safe_right_string,
+    draw_safe_string,
+)
 
 # ── Constants ─────────────────────────────────────────────────────────────────
 MARGIN = 0.4 * inch   # KDP spec: 0.4in on all sides — FIXED, do not change
@@ -225,13 +229,19 @@ class DailyPlannerCanvas:
         # Day number
         c.setFillColor(p["header_text"])
         c.setFont("Helvetica-Bold", 16)
-        c.drawString(m, h - 0.5 * inch, self.date_label)
+        draw_safe_string(
+            c, self.date_label, "Helvetica-Bold", 16, m, h - 0.5 * inch,
+            m, w - m, "daily-page header",
+        )
 
         # Morning intentions section
         y = h - 1.0 * inch
         c.setFillColor(p["text"])
         c.setFont("Helvetica-Bold", 9)
-        c.drawString(m, y, "Morning Intentions")
+        draw_safe_string(
+            c, "Morning Intentions", "Helvetica-Bold", 9, m, y,
+            m, w - m, "daily-page morning intentions",
+        )
         y -= 0.05 * inch
 
         c.setStrokeColor(p["secondary"])
@@ -246,7 +256,10 @@ class DailyPlannerCanvas:
         c.roundRect(m, y - 0.18 * inch, w - 2 * m, 0.22 * inch, 4, fill=1, stroke=0)
         c.setFillColor(p["header_text"])
         c.setFont("Helvetica-Bold", 8)
-        c.drawString(m + 0.08 * inch, y - 0.06 * inch, "TOP 3 PRIORITIES")
+        draw_safe_string(
+            c, "TOP 3 PRIORITIES", "Helvetica-Bold", 8, m + 0.08 * inch,
+            y - 0.06 * inch, m, w - m, "daily-page priorities",
+        )
         y -= 0.18 * inch
 
         c.setStrokeColor(p["accent"])
@@ -263,7 +276,10 @@ class DailyPlannerCanvas:
         y -= 0.3 * inch
         c.setFillColor(p["text"])
         c.setFont("Helvetica-Bold", 9)
-        c.drawString(m, y, "Schedule")
+        draw_safe_string(
+            c, "Schedule", "Helvetica-Bold", 9, m, y,
+            m, w - m, "daily-page schedule",
+        )
         y -= 0.05 * inch
 
         hours = ["6am", "7am", "8am", "9am", "10am", "11am", "12pm", "1pm", "2pm", "3pm", "4pm", "5pm", "6pm", "7pm", "8pm", "9pm"]
@@ -278,7 +294,10 @@ class DailyPlannerCanvas:
                 c.rect(m, y - block_h, w - 2 * m, block_h, fill=1, stroke=0)
             c.setFillColor(p["text"])
             c.setFont("Helvetica", 7)
-            c.drawString(m + 0.02 * inch, y - 0.13 * inch, hour)
+            draw_safe_string(
+                c, hour, "Helvetica", 7, m + 0.02 * inch,
+                y - 0.13 * inch, m, w - m, "daily-page schedule hour",
+            )
             c.setStrokeColor(p["accent"])
             c.setLineWidth(0.3)
             c.line(m + label_w, y - block_h / 2, w - m, y - block_h / 2)
@@ -291,7 +310,11 @@ class DailyPlannerCanvas:
             c.roundRect(m, y - 0.18 * inch, w - 2 * m, 0.22 * inch, 4, fill=1, stroke=0)
             c.setFillColor(p["header_text"])
             c.setFont("Helvetica-Bold", 8)
-            c.drawString(m + 0.08 * inch, y - 0.06 * inch, "EVENING REFLECTION")
+            draw_safe_string(
+                c, "EVENING REFLECTION", "Helvetica-Bold", 8,
+                m + 0.08 * inch, y - 0.06 * inch,
+                m, w - m, "daily-page reflection",
+            )
             y -= 0.18 * inch
             c.setStrokeColor(p["secondary"])
             c.setLineWidth(0.5)
@@ -307,7 +330,17 @@ class DailyPlannerCanvas:
             c.rect(m, m, w - 2 * m, 0.24 * inch, fill=1, stroke=0)
             c.setFillColor(p["text"])
             c.setFont("Helvetica-Oblique", 7)
-            c.drawString(m + 0.06 * inch, m + 0.07 * inch, "Today I'm grateful for: ________________________")
+            draw_safe_string(
+                c,
+                "Today I'm grateful for: ________________________",
+                "Helvetica-Oblique",
+                7,
+                m + 0.06 * inch,
+                m + 0.07 * inch,
+                m,
+                w - m,
+                "daily-page gratitude footer",
+            )
 
 
 class SobrietyDailyCanvas:
@@ -331,7 +364,10 @@ class SobrietyDailyCanvas:
         c.rect(0, h - 0.7 * inch, w, 0.7 * inch, fill=1, stroke=0)
         c.setFillColor(p["header_text"])
         c.setFont("Helvetica-Bold", 18)
-        c.drawCentredString(w / 2, h - 0.48 * inch, f"Day {self.day}")
+        draw_safe_centered_string(
+            c, f"Day {self.day}", "Helvetica-Bold", 18, w / 2,
+            h - 0.48 * inch, m, w - m, "daily-page day header",
+        )
 
         y = h - 1.0 * inch
 
@@ -348,14 +384,21 @@ class SobrietyDailyCanvas:
             c.roundRect(m, y - 0.22 * inch, w - 2 * m, 0.26 * inch, 6, fill=1, stroke=0)
             c.setFillColor(p["text"])
             c.setFont("Helvetica-Bold", 9)
-            c.drawCentredString(w / 2, y - 0.08 * inch, f"Milestone: {milestone_text}")
+            draw_safe_centered_string(
+                c, f"Milestone: {milestone_text}", "Helvetica-Bold", 9,
+                w / 2, y - 0.08 * inch, m, w - m,
+                "milestone banner",
+            )
             y -= 0.32 * inch
 
         # Mood tracker
         y -= 0.1 * inch
         c.setFillColor(p["text"])
         c.setFont("Helvetica-Bold", 9)
-        c.drawString(m, y, "How am I feeling today?")
+        draw_safe_string(
+            c, "How am I feeling today?", "Helvetica-Bold", 9, m, y,
+            m, w - m, "daily-page mood heading",
+        )
         y -= 0.28 * inch
         moods = ["Struggling", "Okay", "Good", "Strong", "Grateful"]
         mood_w = (w - 2 * m) / len(moods)
@@ -367,13 +410,19 @@ class SobrietyDailyCanvas:
             c.circle(x, y, 0.18 * inch, fill=1, stroke=1)
             c.setFillColor(p["text"])
             c.setFont("Helvetica", 6)
-            c.drawCentredString(x, y - 0.28 * inch, mood)
+            draw_safe_centered_string(
+                c, mood, "Helvetica", 6, x, y - 0.28 * inch,
+                m, w - m, "daily-page mood label",
+            )
         y -= 0.45 * inch
 
         # Urge tracker
         c.setFillColor(p["text"])
         c.setFont("Helvetica-Bold", 9)
-        c.drawString(m, y, "Urge intensity (circle one)")
+        draw_safe_string(
+            c, "Urge intensity (circle one)", "Helvetica-Bold", 9, m, y,
+            m, w - m, "daily-page urge heading",
+        )
         y -= 0.28 * inch
         for i in range(1, 11):
             x = m + (i - 1) * (w - 2 * m) / 10 + (w - 2 * m) / 20
@@ -383,7 +432,10 @@ class SobrietyDailyCanvas:
             c.circle(x, y, 0.12 * inch, fill=1, stroke=1)
             c.setFillColor(p["text"])
             c.setFont("Helvetica", 7)
-            c.drawCentredString(x, y - 0.04 * inch, str(i))
+            draw_safe_centered_string(
+                c, str(i), "Helvetica", 7, x, y - 0.04 * inch,
+                m, w - m, "daily-page urge value",
+            )
         y -= 0.35 * inch
 
         # Sections
@@ -398,7 +450,10 @@ class SobrietyDailyCanvas:
                 break
             c.setFillColor(p["text"])
             c.setFont("Helvetica-Bold", 9)
-            c.drawString(m, y, label)
+            draw_safe_string(
+                c, label, "Helvetica-Bold", 9, m, y,
+                m, w - m, "daily-page reflection section",
+            )
             y -= 0.06 * inch
             c.setStrokeColor(p["secondary"])
             c.setLineWidth(0.5)
@@ -462,7 +517,11 @@ class BrightMomentumSobrietyCanvas:
         self._draw_icon(x + 0.22 * inch, y - 0.25 * inch, icon)
         c.setFillColor(p["text"])
         c.setFont("Helvetica-Bold", 7.5)
-        c.drawString(x + 0.38 * inch, y - 0.25 * inch, label)
+        draw_safe_string(
+            c, label, "Helvetica-Bold", 7.5, x + 0.38 * inch,
+            y - 0.25 * inch, x + 0.38 * inch, x + width - 0.14 * inch,
+            "daily-page card label",
+        )
         for index in range(lines):
             self._rule(x + 0.38 * inch, y - (0.52 + index * 0.2) * inch, x + width - 0.14 * inch)
 
@@ -478,22 +537,46 @@ class BrightMomentumSobrietyCanvas:
         c.roundRect(m, h - m - banner_h, content_w, banner_h, 8, fill=1, stroke=0)
         c.setFillColor(p["header_text"])
         c.setFont("Helvetica-Bold", 7.5)
-        c.drawString(m + 0.14 * inch, h - m - 0.26 * inch, f"DAY {self.day}")
-        c.drawCentredString(w / 2, h - m - 0.26 * inch, "YOU SHOWED UP.")
-        c.drawRightString(w - m - 0.14 * inch, h - m - 0.26 * inch, "KEEP GOING →")
+        draw_safe_string(
+            c, f"DAY {self.day}", "Helvetica-Bold", 7.5,
+            m + 0.14 * inch, h - m - 0.26 * inch,
+            m, w - m, "milestone banner day",
+        )
+        draw_safe_centered_string(
+            c, "YOU SHOWED UP.", "Helvetica-Bold", 7.5, w / 2,
+            h - m - 0.26 * inch, m, w - m, "milestone banner heading",
+        )
+        draw_safe_right_string(
+            c, "KEEP GOING →", "Helvetica-Bold", 7.5,
+            w - m - 0.14 * inch, h - m - 0.26 * inch,
+            m, w - m, "milestone banner prompt",
+        )
 
         y = h - m - banner_h - 0.28 * inch
         c.setFillColor(p["text"])
         c.setFont("Helvetica", 6.5)
-        c.drawString(m + 0.12 * inch, y, "MY RECOVERY CHECK-IN")
-        c.drawRightString(w - m - 0.12 * inch, y, "90-DAY TRACKER")
+        draw_safe_string(
+            c, "MY RECOVERY CHECK-IN", "Helvetica", 6.5,
+            m + 0.12 * inch, y, m, w - m, "daily-page recovery heading",
+        )
+        draw_safe_right_string(
+            c, "90-DAY TRACKER", "Helvetica", 6.5,
+            w - m - 0.12 * inch, y, m, w - m,
+            "daily-page tracker heading",
+        )
         y -= 0.34 * inch
 
         c.setFont("Helvetica-Bold", 22)
-        c.drawString(m + 0.12 * inch, y, "TODAY'S")
+        draw_safe_string(
+            c, "TODAY'S", "Helvetica-Bold", 22, m + 0.12 * inch,
+            y, m, w - m, "daily-page bright-spots title",
+        )
         y -= 0.27 * inch
         c.setFillColor(p["secondary"])
-        c.drawString(m + 0.12 * inch, y, "BRIGHT SPOTS")
+        draw_safe_string(
+            c, "BRIGHT SPOTS", "Helvetica-Bold", 22, m + 0.12 * inch,
+            y, m, w - m, "daily-page bright-spots subtitle",
+        )
         y -= 0.34 * inch
 
         card_gap = 0.12 * inch
@@ -507,14 +590,26 @@ class BrightMomentumSobrietyCanvas:
 
         c.setFillColor(p["text"])
         c.setFont("Helvetica-Bold", 7.5)
-        c.drawString(m + 0.12 * inch, y, "TODAY I PRACTICED")
+        draw_safe_string(
+            c, "TODAY I PRACTICED", "Helvetica-Bold", 7.5,
+            m + 0.12 * inch, y, m, w - m,
+            "daily-page practiced heading",
+        )
         y -= 0.18 * inch
         c.setFont("Helvetica", 7)
-        c.drawString(m + 0.12 * inch, y, "□ honesty     □ patience     □ asking for help")
+        draw_safe_string(
+            c, "□ honesty     □ patience     □ asking for help",
+            "Helvetica", 7, m + 0.12 * inch, y, m, w - m,
+            "daily-page practiced checklist",
+        )
 
         c.setFillColor(p["secondary"])
         c.setFont("Helvetica-BoldOblique", 8)
-        c.drawCentredString(w / 2, m + 0.12 * inch, "Tiny choices add up to a changed life.")
+        draw_safe_centered_string(
+            c, "Tiny choices add up to a changed life.",
+            "Helvetica-BoldOblique", 8, w / 2, m + 0.12 * inch,
+            m, w - m, "daily-page closing line",
+        )
 
 
 def generate_interior(args, output_path):
@@ -546,12 +641,22 @@ def generate_interior(args, output_path):
     c.setFillColor(p["header_text"])
     c.setFont("Helvetica-Bold", 22)
     title_text = args.title or "My Daily Planner"
-    c.drawCentredString(pw / 2, ph * 0.78, title_text)
+    draw_safe_centered_string(
+        c, title_text, "Helvetica-Bold", 22, pw / 2, ph * 0.78,
+        MARGIN, pw - MARGIN, "title-page title",
+    )
     c.setFont("Helvetica", 12)
-    c.drawCentredString(pw / 2, ph * 0.68, f"{day_count}-Day Journey")
+    draw_safe_centered_string(
+        c, f"{day_count}-Day Journey", "Helvetica", 12, pw / 2,
+        ph * 0.68, MARGIN, pw - MARGIN, "title-page journey line",
+    )
     c.setFillColor(p["text"])
     c.setFont("Helvetica", 10)
-    c.drawCentredString(pw / 2, ph * 0.45, args.author_name or "Bright Mindful Pages")
+    draw_safe_centered_string(
+        c, args.author_name or "Bright Mindful Pages", "Helvetica", 10,
+        pw / 2, ph * 0.45, MARGIN, pw - MARGIN,
+        "title-page author line",
+    )
 
     # ── Copyright page ────────────────────────────────────────────────────────
     _new_page()
@@ -568,7 +673,11 @@ def generate_interior(args, output_path):
     ]
     y = ph / 2
     for line in copyright_lines:
-        c.drawCentredString(pw / 2, y, line)
+        if line:
+            draw_safe_centered_string(
+                c, line, "Helvetica", 8, pw / 2, y,
+                MARGIN, pw - MARGIN, "copyright-page line",
+            )
         y -= 0.2 * inch
 
     # ── Introduction page ─────────────────────────────────────────────────────
@@ -577,7 +686,10 @@ def generate_interior(args, output_path):
     c.rect(0, ph - 1.0 * inch, pw, 1.0 * inch, fill=1, stroke=0)
     c.setFillColor(p["header_text"])
     c.setFont("Helvetica-Bold", 16)
-    c.drawCentredString(pw / 2, ph - 0.65 * inch, "How to Use This Planner")
+    draw_safe_centered_string(
+        c, "How to Use This Planner", "Helvetica-Bold", 16, pw / 2,
+        ph - 0.65 * inch, MARGIN, pw - MARGIN, "introduction-page header",
+    )
     c.setFillColor(p["text"])
     c.setFont("Helvetica", 9)
     intro_text = (
@@ -591,13 +703,19 @@ def generate_interior(args, output_path):
     for word in words:
         test = line + (" " if line else "") + word
         if c.stringWidth(test, "Helvetica", 9) > pw - 2 * MARGIN:
-            c.drawString(MARGIN, y, line)
+            draw_safe_string(
+                c, line, "Helvetica", 9, MARGIN, y,
+                MARGIN, pw - MARGIN, "introduction-page body line",
+            )
             y -= 0.18 * inch
             line = word
         else:
             line = test
     if line:
-        c.drawString(MARGIN, y, line)
+        draw_safe_string(
+            c, line, "Helvetica", 9, MARGIN, y,
+            MARGIN, pw - MARGIN, "introduction-page body line",
+        )
 
     # ── Blank verso ────────────────────────────────────────────────────────────
     _new_page()
@@ -622,7 +740,11 @@ def generate_interior(args, output_path):
             c.rect(0, ph - 0.4 * inch, pw, 0.4 * inch, fill=1, stroke=0)
             c.setFillColor(p["header_text"])
             c.setFont("Helvetica-Bold", 10)
-            c.drawCentredString(pw / 2, ph - 0.27 * inch, f"Day {day} — Deeper Reflection")
+            draw_safe_centered_string(
+                c, f"Day {day} — Deeper Reflection", "Helvetica-Bold", 10,
+                pw / 2, ph - 0.27 * inch, MARGIN, pw - MARGIN,
+                "daily-page deeper-reflection header",
+            )
             y = ph - 0.7 * inch
             sections = ["What emotions came up today?", "Coping strategies I used:", "What I want to remember:", "Message to my future self:"]
             for section in sections:
@@ -630,7 +752,10 @@ def generate_interior(args, output_path):
                     break
                 c.setFillColor(p["text"])
                 c.setFont("Helvetica-Bold", 9)
-                c.drawString(MARGIN, y, section)
+                draw_safe_string(
+                    c, section, "Helvetica-Bold", 9, MARGIN, y,
+                    MARGIN, pw - MARGIN, "daily-page deeper-reflection section",
+                )
                 y -= 0.06 * inch
                 c.setStrokeColor(p["secondary"])
                 c.setLineWidth(0.5)
@@ -647,7 +772,11 @@ def generate_interior(args, output_path):
             c.rect(0, ph - 0.7 * inch, pw, 0.7 * inch, fill=1, stroke=0)
             c.setFillColor(p["header_text"])
             c.setFont("Helvetica-Bold", 14)
-            c.drawCentredString(pw / 2, ph - 0.47 * inch, f"Week {week_num} — Habit Tracker")
+            draw_safe_centered_string(
+                c, f"Week {week_num} — Habit Tracker", "Helvetica-Bold", 14,
+                pw / 2, ph - 0.47 * inch, MARGIN, pw - MARGIN,
+                "weekly habit-tracker header",
+            )
             y = ph - 1.1 * inch
             days_of_week = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
             habits = ["Morning routine", "Exercise", "Water (8 cups)", "Meditation", "Reading", "Journaling", "Sleep 7hrs+"]
@@ -658,7 +787,12 @@ def generate_interior(args, output_path):
             c.setFillColor(p["header_text"])
             c.setFont("Helvetica-Bold", 8)
             for i, d in enumerate(days_of_week):
-                c.drawCentredString(MARGIN + 1.2 * inch + (i + 0.5) * cell_w, y - 0.08 * inch, d)
+                draw_safe_centered_string(
+                    c, d, "Helvetica-Bold", 8,
+                    MARGIN + 1.2 * inch + (i + 0.5) * cell_w,
+                    y - 0.08 * inch, MARGIN, pw - MARGIN,
+                    "weekly habit-tracker day label",
+                )
             y -= 0.25 * inch
             for j, habit in enumerate(habits):
                 if y - 0.28 * inch < MARGIN:
@@ -668,7 +802,11 @@ def generate_interior(args, output_path):
                 c.rect(MARGIN, y - 0.25 * inch, pw - 2 * MARGIN, 0.25 * inch, fill=1, stroke=0)
                 c.setFillColor(p["text"])
                 c.setFont("Helvetica", 8)
-                c.drawString(MARGIN + 0.05 * inch, y - 0.14 * inch, habit)
+                draw_safe_string(
+                    c, habit, "Helvetica", 8, MARGIN + 0.05 * inch,
+                    y - 0.14 * inch, MARGIN, pw - MARGIN,
+                    "weekly habit-tracker habit label",
+                )
                 for k in range(7):
                     cx = MARGIN + 1.2 * inch + (k + 0.5) * cell_w
                     cy = y - 0.125 * inch
@@ -686,7 +824,11 @@ def generate_interior(args, output_path):
             c.rect(0, ph - 0.7 * inch, pw, 0.7 * inch, fill=1, stroke=0)
             c.setFillColor(p["header_text"])
             c.setFont("Helvetica-Bold", 14)
-            c.drawCentredString(pw / 2, ph - 0.47 * inch, f"Week {week_num} — Weekly Review")
+            draw_safe_centered_string(
+                c, f"Week {week_num} — Weekly Review", "Helvetica-Bold", 14,
+                pw / 2, ph - 0.47 * inch, MARGIN, pw - MARGIN,
+                "weekly-review header",
+            )
             y = ph - 1.0 * inch
             prompts = [
                 ("This week's biggest win:", 2),
@@ -700,7 +842,10 @@ def generate_interior(args, output_path):
                     break
                 c.setFillColor(p["text"])
                 c.setFont("Helvetica-Bold", 9)
-                c.drawString(MARGIN, y, prompt)
+                draw_safe_string(
+                    c, prompt, "Helvetica-Bold", 9, MARGIN, y,
+                    MARGIN, pw - MARGIN, "weekly-review prompt",
+                )
                 y -= 0.06 * inch
                 c.setStrokeColor(p["secondary"])
                 c.setLineWidth(0.5)
@@ -719,14 +864,30 @@ def generate_interior(args, output_path):
             c.circle(pw / 2, ph / 2, 1.4 * inch, fill=1, stroke=0)
             c.setFillColor(p["header_text"])
             c.setFont("Helvetica-Bold", 24)
-            c.drawCentredString(pw / 2, ph / 2 + 0.2 * inch, f"{week * 7}")
+            draw_safe_centered_string(
+                c, f"{week * 7}", "Helvetica-Bold", 24, pw / 2,
+                ph / 2 + 0.2 * inch, MARGIN, pw - MARGIN,
+                "milestone banner day count",
+            )
             c.setFont("Helvetica", 12)
-            c.drawCentredString(pw / 2, ph / 2 - 0.25 * inch, "DAYS")
+            draw_safe_centered_string(
+                c, "DAYS", "Helvetica", 12, pw / 2,
+                ph / 2 - 0.25 * inch, MARGIN, pw - MARGIN,
+                "milestone banner days label",
+            )
             c.setFillColor(p["text"])
             c.setFont("Helvetica-Bold", 11)
-            c.drawCentredString(pw / 2, ph / 2 - 1.8 * inch, "You made it another week.")
+            draw_safe_centered_string(
+                c, "You made it another week.", "Helvetica-Bold", 11, pw / 2,
+                ph / 2 - 1.8 * inch, MARGIN, pw - MARGIN,
+                "milestone banner encouragement",
+            )
             c.setFont("Helvetica", 9)
-            c.drawCentredString(pw / 2, ph / 2 - 2.1 * inch, "Every single day counts.")
+            draw_safe_centered_string(
+                c, "Every single day counts.", "Helvetica", 9, pw / 2,
+                ph / 2 - 2.1 * inch, MARGIN, pw - MARGIN,
+                "milestone banner closing",
+            )
 
     # ── Back matter ────────────────────────────────────────────────────────────
     _new_page()
@@ -734,7 +895,10 @@ def generate_interior(args, output_path):
     c.rect(0, ph - 0.7 * inch, pw, 0.7 * inch, fill=1, stroke=0)
     c.setFillColor(p["header_text"])
     c.setFont("Helvetica-Bold", 14)
-    c.drawCentredString(pw / 2, ph - 0.47 * inch, "Notes")
+    draw_safe_centered_string(
+        c, "Notes", "Helvetica-Bold", 14, pw / 2,
+        ph - 0.47 * inch, MARGIN, pw - MARGIN, "notes-page header",
+    )
     y = ph - 1.0 * inch
     c.setStrokeColor(p["secondary"])
     c.setLineWidth(0.5)
@@ -747,11 +911,22 @@ def generate_interior(args, output_path):
     c.rect(0, 0, pw, ph, fill=1, stroke=0)
     c.setFillColor(p["text"])
     c.setFont("Helvetica-Bold", 14)
-    c.drawCentredString(pw / 2, ph / 2 + 0.3 * inch, "You did it.")
+    draw_safe_centered_string(
+        c, "You did it.", "Helvetica-Bold", 14, pw / 2,
+        ph / 2 + 0.3 * inch, MARGIN, pw - MARGIN,
+        "closing-page heading",
+    )
     c.setFont("Helvetica", 10)
-    c.drawCentredString(pw / 2, ph / 2, f"{day_count} days of intentional living.")
+    draw_safe_centered_string(
+        c, f"{day_count} days of intentional living.", "Helvetica", 10,
+        pw / 2, ph / 2, MARGIN, pw - MARGIN, "closing-page summary",
+    )
     c.setFont("Helvetica-Oblique", 9)
-    c.drawCentredString(pw / 2, ph / 2 - 0.4 * inch, args.author_name or "Bright Mindful Pages")
+    draw_safe_centered_string(
+        c, args.author_name or "Bright Mindful Pages", "Helvetica-Oblique", 9,
+        pw / 2, ph / 2 - 0.4 * inch, MARGIN, pw - MARGIN,
+        "closing-page author line",
+    )
 
     c.save()
     return page_num

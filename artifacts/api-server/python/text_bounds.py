@@ -3,6 +3,20 @@
 from __future__ import annotations
 
 
+class TextBoundsError(ValueError):
+    """Raised when measured text crosses a configured safe boundary."""
+
+    def __init__(self, label, overflow, left_overflow, right_overflow):
+        self.label = label
+        self.overflow = overflow
+        self.left_overflow = left_overflow
+        self.right_overflow = right_overflow
+        super().__init__(
+            f"{label} overflows the safe bounds by {overflow:.2f}pt "
+            f"(left {left_overflow:.2f}pt, right {right_overflow:.2f}pt)"
+        )
+
+
 def validate_text_bounds(c, text, font, size, cx_or_x, safe_left, safe_right, label):
     """Raise when measured text crosses the supplied horizontal safe bounds.
 
@@ -40,7 +54,33 @@ def validate_text_bounds(c, text, font, size, cx_or_x, safe_left, safe_right, la
     right_overflow = max(0.0, text_right - safe_right)
     overflow = max(left_overflow, right_overflow)
     if overflow > 0:
-        raise ValueError(
-            f"{label} overflows the safe bounds by {overflow:.2f}pt "
-            f"(left {left_overflow:.2f}pt, right {right_overflow:.2f}pt)"
+        raise TextBoundsError(
+            label,
+            overflow,
+            left_overflow,
+            right_overflow,
         )
+
+
+def draw_safe_string(c, text, font, size, x, y, safe_left, safe_right, label):
+    """Validate and draw a left-aligned string."""
+    validate_text_bounds(
+        c, text, font, size, ("left", x), safe_left, safe_right, label
+    )
+    c.drawString(x, y, text)
+
+
+def draw_safe_centered_string(
+    c, text, font, size, cx, y, safe_left, safe_right, label
+):
+    """Validate and draw a centered string."""
+    validate_text_bounds(c, text, font, size, cx, safe_left, safe_right, label)
+    c.drawCentredString(cx, y, text)
+
+
+def draw_safe_right_string(c, text, font, size, x, y, safe_left, safe_right, label):
+    """Validate and draw a right-aligned string."""
+    validate_text_bounds(
+        c, text, font, size, ("right", x), safe_left, safe_right, label
+    )
+    c.drawRightString(x, y, text)
