@@ -1,6 +1,15 @@
-# KDP Digital Products Studio
+# KDP Studio
 
-KDP Digital Products Studio is a single-user publishing workspace for **Bright Mindful Pages**. It helps plan, validate, generate, and organize original low-content and medium-content paperback products such as planners, journals, and trackers.
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)
+![Automation](https://img.shields.io/badge/Automation-Custom-blue)
+![Status](https://img.shields.io/badge/Status-Active-success)
+
+> A focused publishing workspace for planning, validating, generating, and organizing differentiated Bright Mindful Pages KDP planners, journals, and trackers.
+
+## Topics / Keywords
+`amazon-kdp` `kdp` `book-generation` `journals` `planners` `low-content-books` `print-on-demand` `publishing-tools` `reportlab` `typescript` `react` `vite` `postgresql` `automation` `custom-automation`
 
 ## What it does
 
@@ -10,7 +19,7 @@ KDP Digital Products Studio is a single-user publishing workspace for **Bright M
 - Produces KDP listing metadata and editable template packages
 - Tracks whether a project is planned, generated, or manually published
 
-The tool prepares files for KDP. It does not scrape Amazon or automate unofficial uploads.
+The tool prepares files for KDP. It does **not** scrape Amazon or automate unofficial uploads.
 
 ## Run locally
 
@@ -20,7 +29,7 @@ pnpm --filter @workspace/api-server run dev
 pnpm --filter @workspace/kdp-studio run dev
 ```
 
-The app uses the Replit-managed PostgreSQL database through `DATABASE_URL`. Do not commit environment files or credentials.
+The app uses PostgreSQL via `DATABASE_URL`. Do not commit environment files or credentials.
 
 ## Project layout
 
@@ -29,7 +38,6 @@ The app uses the Replit-managed PostgreSQL database through `DATABASE_URL`. Do n
 - `lib/db/` — Drizzle schema and database tooling
 - `lib/api-spec/` — OpenAPI source contract
 - `docs/` — public product specification and project documentation
-- `.agents/skills/kdp-book-studio/` — concise KDP operating rules
 
 ## KDP guardrails
 
@@ -38,9 +46,17 @@ The app uses the Replit-managed PostgreSQL database through `DATABASE_URL`. Do n
 - Spine text only at 79+ pages
 - No copyrighted or scraped content
 - No near-identical color-only variants
-- Subtitles use one core value proposition instead of keyword stuffing
 
-See [`docs/KDP-Digital-Products-Studio-V2-Master-Build-Specification.md`](docs/KDP-Digital-Products-Studio-V2-Master-Build-Specification.md) for the full v2 plan.
+## Author
+**Nadeem (OutLawZ)**  
+Custom Automation Specialist  
+
+📧 Contact: [net2outlawzz@gmail.com](mailto:net2outlawzz@gmail.com)  
+🔗 GitHub: [0utLawzz](https://github.com/0utLawzz)
+
+---
+
+*Need custom KDP / publishing automation? Contact me.*
 
 ## License
 
